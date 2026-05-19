@@ -1008,7 +1008,8 @@
 
   async function uploadFileToGitHub(filename, content) {
     const filePath = 'reports/' + filename;
-    const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${encodeURIComponent(filePath)}`;
+    // לקודד רק את שם הקובץ, לא את ה-/ של הנתיב
+    const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/reports/${encodeURIComponent(filename)}`;
     // בדיקה אם קובץ באותו שם כבר קיים
     let sha = null;
     try {
@@ -1039,8 +1040,21 @@
   }
 
   function sanitizeFilename(name) {
-    // הסרת תווים בעייתיים אבל שמירה על עברית
-    return name.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, '_').substring(0, 100);
+    // הפרדה: שם + סיומת
+    const lastDot = name.lastIndexOf('.');
+    let baseName = lastDot > 0 ? name.substring(0, lastDot) : name;
+    const ext = lastDot > 0 ? name.substring(lastDot) : '.html';
+
+    // אם השם מכיל אותיות עבריות - להחליף בשם אנגלי + timestamp ייחודי
+    const hasHebrew = /[\u0590-\u05FF]/.test(baseName);
+    if (hasHebrew) {
+      const timestamp = Date.now();
+      return `report_${timestamp}${ext}`;
+    }
+
+    // אחרת - להסיר תווים בעייתיים בלבד
+    baseName = baseName.replace(/[<>:"/\\|?*\s]/g, '_').substring(0, 80);
+    return baseName + ext;
   }
 
   async function saveItem() {
