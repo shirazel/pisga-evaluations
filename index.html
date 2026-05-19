@@ -136,11 +136,16 @@
   .category-icon {
     width: 64px; height: 64px; border-radius: 16px;
     display: flex; align-items: center; justify-content: center;
-    margin-bottom: 24px; font-size: 32px;
-    background: linear-gradient(135deg, var(--orange-soft), var(--teal-soft));
+    margin-bottom: 24px;
+    background: var(--white);
+    position: relative;
+    border: 1.5px solid #FFE4BD;
+    box-shadow: 0 2px 8px rgba(243, 156, 44, 0.06);
   }
-  .category-card:nth-child(3n+1) .category-icon { background: var(--orange-soft); }
-  .category-card:nth-child(3n+2) .category-icon { background: var(--teal-soft); }
+  .category-icon svg { width: 40px; height: 40px; position: relative; z-index: 1; }
+  .category-card:nth-child(3n+1) .category-icon { border-color: #FFE4BD; }
+  .category-card:nth-child(3n+2) .category-icon { border-color: #C5EBED; }
+  .category-card:nth-child(3n+3) .category-icon { border-color: #F5D9B8; }
   .category-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: var(--dark); }
   .category-desc { color: var(--gray); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; min-height: 50px; }
   .category-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--gray-light); }
@@ -169,13 +174,17 @@
   }
   .card:hover::before { transform: scaleX(1); }
   .card-icon {
-    width: 48px; height: 48px; border-radius: 12px;
+    width: 46px; height: 46px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    margin-bottom: 20px; font-size: 24px;
-    background: var(--orange-soft);
+    margin-bottom: 20px;
+    background: var(--white);
+    position: relative;
+    border: 1.5px solid #FFE4BD;
+    box-shadow: 0 2px 6px rgba(243, 156, 44, 0.04);
   }
-  .card:nth-child(3n+2) .card-icon { background: var(--teal-soft); }
-  .card:nth-child(3n+3) .card-icon { background: linear-gradient(135deg, var(--orange-soft), var(--teal-soft)); }
+  .card-icon svg { width: 30px; height: 30px; }
+  .card:nth-child(3n+2) .card-icon { border-color: #C5EBED; }
+  .card:nth-child(3n+3) .card-icon { border-color: #F5D9B8; }
   .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
   .card-desc { color: var(--gray); font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px; min-height: 45px; }
   .card-link { display: inline-flex; align-items: center; gap: 6px; color: var(--teal); font-weight: 600; font-size: 0.9rem; transition: gap 0.2s ease; }
@@ -254,10 +263,16 @@
   }
   .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--teal); }
   .form-group textarea { resize: vertical; min-height: 70px; font-family: inherit; }
-  .emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-top: 8px; }
-  .emoji-btn { background: var(--bg); border: 2px solid transparent; border-radius: 8px; padding: 8px; font-size: 1.2rem; cursor: pointer; transition: all 0.15s ease; }
-  .emoji-btn:hover { background: var(--orange-soft); }
-  .emoji-btn.selected { border-color: var(--orange); background: var(--orange-soft); }
+  .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 8px; }
+  .emoji-btn {
+    background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 12px;
+    padding: 10px; cursor: pointer; transition: all 0.15s ease;
+    display: flex; align-items: center; justify-content: center;
+    aspect-ratio: 1;
+  }
+  .emoji-btn svg { width: 26px; height: 26px; }
+  .emoji-btn:hover { border-color: var(--orange-light); background: var(--orange-soft); transform: translateY(-1px); }
+  .emoji-btn.selected { border-color: var(--orange); background: var(--orange-soft); box-shadow: 0 0 0 3px rgba(243, 156, 44, 0.15); }
   .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
   .btn { flex: 1; padding: 12px 20px; border-radius: 10px; border: none; font-family: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
   .btn-primary { background: linear-gradient(135deg, var(--orange), var(--teal)); color: var(--white); }
@@ -410,7 +425,7 @@
   <div class="footer-dots">
     <span></span><span></span><span></span>
   </div>
-  <p>פסג"ה החדרה · קהילת חינוך היברידית</p>
+  <p>שירה רוט זליקוביץ · רכזת הערכה · פסג"ה החדרה</p>
 </footer>
 
 <div class="toast" id="toast">נשמר</div>
@@ -433,7 +448,67 @@
 
   const DATA_FILE_PATH = 'evaluations.json';
   const SESSION_KEY = 'pisga_admin_session_v2';
-  const EMOJIS = ['📊','📈','📋','📝','📑','📚','🎯','⭐','💡','🔍','📌','🎓','📂','✨','🏆','📅','🗂️','📰','🎨','🌟','💬','🧩','🔔','📣'];
+
+  // ספריית אייקונים מותאמים - SVG בצבעי הפסג"ה (כתום וטורקיז)
+  // כל אייקון משתמש ב-gradient שמועבר דרך URL
+  const ICONS = {
+    'chart': '<svg viewBox="0 0 24 24" fill="none" stroke="url(#grad)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#F39C2C"/><stop offset="100%" stop-color="#4FBDC4"/></linearGradient></defs><path d="M3 3v18h18"/><path d="M7 14l3-3 4 4 5-6" stroke="#F39C2C"/><circle cx="7" cy="14" r="1.5" fill="#F39C2C" stroke="none"/><circle cx="10" cy="11" r="1.5" fill="#4FBDC4" stroke="none"/><circle cx="14" cy="15" r="1.5" fill="#F39C2C" stroke="none"/><circle cx="19" cy="9" r="1.5" fill="#4FBDC4" stroke="none"/></svg>',
+    'bars': '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><rect x="3" y="13" width="4" height="8" rx="1" fill="#F39C2C"/><rect x="10" y="8" width="4" height="13" rx="1" fill="#4FBDC4"/><rect x="17" y="4" width="4" height="17" rx="1" fill="#F39C2C"/></svg>',
+    'clipboard': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9z" fill="#4FBDC4" stroke="#4FBDC4"/><line x1="9" y1="11" x2="15" y2="11" stroke="#4FBDC4"/><line x1="9" y1="15" x2="15" y2="15" stroke="#4FBDC4"/><line x1="9" y1="19" x2="13" y2="19" stroke="#4FBDC4"/></svg>',
+    'edit': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="#4FBDC4"/></svg>',
+    'document': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8" stroke="#4FBDC4" fill="#E8F7F8"/><line x1="8" y1="13" x2="16" y2="13" stroke="#4FBDC4"/><line x1="8" y1="17" x2="14" y2="17" stroke="#4FBDC4"/></svg>',
+    'books': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="#4FBDC4"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><line x1="9" y1="7" x2="16" y2="7" stroke="#4FBDC4"/><line x1="9" y1="11" x2="13" y2="11" stroke="#4FBDC4"/></svg>',
+    'target': '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><circle cx="12" cy="12" r="10" fill="#FEF3E2" stroke="#F39C2C" stroke-width="1.8"/><circle cx="12" cy="12" r="6" fill="#FFE4BD" stroke="#F39C2C" stroke-width="1.5"/><circle cx="12" cy="12" r="2.5" fill="#4FBDC4"/></svg>',
+    'star': '<svg viewBox="0 0 24 24" fill="#FBB360" stroke="#F39C2C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/><polygon points="12 6 13.5 10 17.5 10.5 14.5 13.5 15.5 17.5 12 15.5 8.5 17.5 9.5 13.5 6.5 10.5 10.5 10" fill="#4FBDC4" stroke="none"/></svg>',
+    'idea': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21h6" stroke="#4FBDC4"/><path d="M10 17.5h4"/><path d="M12 2a7 7 0 00-4 12.74V17h8v-2.26A7 7 0 0012 2z" fill="#FFE4BD"/><circle cx="12" cy="9" r="2" fill="#4FBDC4" stroke="none"/></svg>',
+    'search': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7" fill="#FEF3E2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="#4FBDC4" stroke-width="2.5"/></svg>',
+    'pin': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-7 8-13a8 8 0 10-16 0c0 6 8 13 8 13z" fill="#FEF3E2"/><circle cx="12" cy="9" r="3" fill="#4FBDC4" stroke="#4FBDC4"/></svg>',
+    'graduation': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z" fill="#FFE4BD"/><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" stroke="#4FBDC4"/><line x1="22" y1="10" x2="22" y2="16" stroke="#4FBDC4"/></svg>',
+    'folder': '<svg viewBox="0 0 24 24" fill="#FEF3E2" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/><line x1="2" y1="10" x2="22" y2="10" stroke="#4FBDC4"/></svg>',
+    'sparkle': '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z" fill="#FBB360" stroke="#F39C2C" stroke-width="1.5"/><circle cx="19" cy="5" r="1.5" fill="#4FBDC4"/><circle cx="5" cy="19" r="1.5" fill="#4FBDC4"/></svg>',
+    'trophy': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 01-2-2V5h4" stroke="#4FBDC4"/><path d="M18 9h2a2 2 0 002-2V5h-4" stroke="#4FBDC4"/><path d="M6 5v6a6 6 0 0012 0V5z" fill="#FFE4BD"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="21" x2="16" y2="21" stroke="#4FBDC4" stroke-width="2.5"/></svg>',
+    'calendar': '<svg viewBox="0 0 24 24" fill="#FEF3E2" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6" stroke="#4FBDC4" stroke-width="2.5"/><line x1="8" y1="2" x2="8" y2="6" stroke="#4FBDC4" stroke-width="2.5"/><line x1="3" y1="10" x2="21" y2="10" stroke="#4FBDC4"/><circle cx="8" cy="15" r="1.5" fill="#F39C2C" stroke="none"/><circle cx="12" cy="15" r="1.5" fill="#4FBDC4" stroke="none"/></svg>',
+    'archive': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="5" rx="1" fill="#FFE4BD"/><path d="M4 9v10a2 2 0 002 2h12a2 2 0 002-2V9" fill="#FEF3E2"/><line x1="10" y1="14" x2="14" y2="14" stroke="#4FBDC4" stroke-width="2.5"/></svg>',
+    'news': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z" fill="#FEF3E2"/><line x1="6" y1="9" x2="11" y2="9" stroke="#4FBDC4"/><line x1="6" y1="13" x2="18" y2="13" stroke="#4FBDC4"/><line x1="6" y1="17" x2="18" y2="17" stroke="#4FBDC4"/><rect x="13" y="7" width="5" height="4" rx="0.5" fill="#FBB360" stroke="none"/></svg>',
+    'palette': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c1 0 1.5-.5 1.5-1.5 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .5-1.5 1.5-1.5H16c3.3 0 6-2.7 6-6 0-5-4.5-9-10-9z" fill="#FFE4BD"/><circle cx="7" cy="10" r="1.5" fill="#F39C2C" stroke="none"/><circle cx="12" cy="7" r="1.5" fill="#4FBDC4" stroke="none"/><circle cx="17" cy="10" r="1.5" fill="#FBB360" stroke="none"/></svg>',
+    'sparkle2': '<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><circle cx="12" cy="12" r="3" fill="#4FBDC4"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="#F39C2C" stroke-width="2" stroke-linecap="round"/></svg>',
+    'chat': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" fill="#FEF3E2"/><circle cx="9" cy="11" r="1" fill="#4FBDC4" stroke="none"/><circle cx="12.5" cy="11" r="1" fill="#4FBDC4" stroke="none"/><circle cx="16" cy="11" r="1" fill="#4FBDC4" stroke="none"/></svg>',
+    'puzzle': '<svg viewBox="0 0 24 24" fill="#FFE4BD" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 11h-4V7c0-1.1-.9-2-2-2s-2 .9-2 2H7c-1.1 0-2 .9-2 2v4c-1.1 0-2 .9-2 2s.9 2 2 2v4c0 1.1.9 2 2 2h4c0-1.1.9-2 2-2s2 .9 2 2h4c1.1 0 2-.9 2-2v-4c1.1 0 2-.9 2-2s-.9-2-2-2V9c0-1.1-.9-2-2-2z"/><circle cx="12" cy="12" r="2" fill="#4FBDC4" stroke="none"/></svg>',
+    'bell': '<svg viewBox="0 0 24 24" fill="#FEF3E2" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0" stroke="#4FBDC4" stroke-width="2.5"/></svg>',
+    'megaphone': '<svg viewBox="0 0 24 24" fill="none" stroke="#F39C2C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8v18l-18-8z" fill="#FFE4BD"/><path d="M11.6 16.8a3 3 0 11-5.8-1.6" stroke="#4FBDC4"/></svg>'
+  };
+
+  // רשימת האייקונים שיוצגו בבחירה (id + שם תצוגה)
+  const ICON_LIST = [
+    { id: 'chart', name: 'גרף קווי' },
+    { id: 'bars', name: 'גרף עמודות' },
+    { id: 'clipboard', name: 'לוח' },
+    { id: 'edit', name: 'עריכה' },
+    { id: 'document', name: 'מסמך' },
+    { id: 'books', name: 'ספרים' },
+    { id: 'target', name: 'מטרה' },
+    { id: 'star', name: 'כוכב' },
+    { id: 'idea', name: 'רעיון' },
+    { id: 'search', name: 'חיפוש' },
+    { id: 'pin', name: 'סיכה' },
+    { id: 'graduation', name: 'לימודים' },
+    { id: 'folder', name: 'תיקייה' },
+    { id: 'sparkle', name: 'נצנוץ' },
+    { id: 'trophy', name: 'גביע' },
+    { id: 'calendar', name: 'יומן' },
+    { id: 'archive', name: 'ארכיון' },
+    { id: 'news', name: 'חדשות' },
+    { id: 'palette', name: 'פלטה' },
+    { id: 'sparkle2', name: 'זוהר' },
+    { id: 'chat', name: 'שיחה' },
+    { id: 'puzzle', name: 'פאזל' },
+    { id: 'bell', name: 'פעמון' },
+    { id: 'megaphone', name: 'מגאפון' }
+  ];
+
+  function getIconSvg(iconId) {
+    return ICONS[iconId] || ICONS['chart'];
+  }
 
   const defaultData = {
     categories: [
@@ -441,16 +516,16 @@
         id: 'district-survey',
         title: 'ניתוח שאלון מחוזי',
         desc: 'דוחות משוב וניתוחים של שאלונים שהועברו לרכזים ובעלי תפקידים במחוז',
-        icon: '📊',
+        icon: 'chart',
         items: [
-          { id: 1, title: 'רכזות חינוך לשוני', desc: 'דוח משוב מחוזי - סיכום מנהלים, ניתוח אחוזים ומשובים מילוליים', icon: '🎓', link: 'https://sites.google.com/pisgah.org.il/miryam/district-feedback' }
+          { id: 1, title: 'רכזות חינוך לשוני', desc: 'דוח משוב מחוזי - סיכום מנהלים, ניתוח אחוזים ומשובים מילוליים', icon: 'graduation', link: 'https://sites.google.com/pisgah.org.il/miryam/district-feedback' }
         ]
       },
       {
         id: 'pisga-bitnua',
         title: 'ניתוח סדנאות פסג"ה בתנועה',
         desc: 'משובים וניתוחים של סדנאות וההשתלמויות במסגרת פסג"ה בתנועה',
-        icon: '🎯',
+        icon: 'target',
         items: []
       }
     ]
@@ -461,8 +536,8 @@
   let editingItem = null;
   let currentItemCategoryId = null;
   let currentView = 'home';
-  let selectedCategoryEmoji = '📁';
-  let selectedItemEmoji = '📊';
+  let selectedCategoryEmoji = 'folder';
+  let selectedItemEmoji = 'chart';
 
   function loadSession() {
     try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; }
@@ -581,7 +656,7 @@
             <button class="action-btn edit" onclick="editCategory(event, '${cat.id}')" title="עריכה">✏️</button>
             <button class="action-btn delete" onclick="deleteCategory(event, '${cat.id}')" title="מחיקה">🗑️</button>
           </div>
-          <div class="category-icon">${cat.icon || '📁'}</div>
+          <div class="category-icon">${getIconSvg(cat.icon)}</div>
           <h3 class="category-title">${escapeHtml(cat.title)}</h3>
           <p class="category-desc">${escapeHtml(cat.desc || '')}</p>
           <div class="category-meta">
@@ -636,7 +711,7 @@
             <button class="action-btn edit" onclick="editItem(event, '${cat.id}', ${item.id})" title="עריכה">✏️</button>
             <button class="action-btn delete" onclick="deleteItem(event, '${cat.id}', ${item.id})" title="מחיקה">🗑️</button>
           </div>
-          <div class="card-icon">${item.icon || '📊'}</div>
+          <div class="card-icon">${getIconSvg(item.icon)}</div>
           <h3 class="card-title">${escapeHtml(item.title)}</h3>
           <p class="card-desc">${escapeHtml(item.desc || '')}</p>
           <span class="card-link">לפתיחת הניתוח</span>
@@ -665,7 +740,7 @@
     document.getElementById('categoryModalTitle').textContent = 'הוספת קטגוריה חדשה';
     document.getElementById('catTitle').value = '';
     document.getElementById('catDesc').value = '';
-    selectedCategoryEmoji = '📁';
+    selectedCategoryEmoji = 'folder';
     renderEmojiGrid('catEmojiGrid', 'category');
     document.getElementById('categoryModal').classList.add('active');
     setTimeout(() => document.getElementById('catTitle').focus(), 100);
@@ -679,7 +754,7 @@
     document.getElementById('categoryModalTitle').textContent = 'עריכת קטגוריה';
     document.getElementById('catTitle').value = cat.title;
     document.getElementById('catDesc').value = cat.desc || '';
-    selectedCategoryEmoji = cat.icon || '📁';
+    selectedCategoryEmoji = cat.icon || 'folder';
     renderEmojiGrid('catEmojiGrid', 'category');
     document.getElementById('categoryModal').classList.add('active');
   }
@@ -726,7 +801,7 @@
     document.getElementById('itemTitle').value = '';
     document.getElementById('itemDesc').value = '';
     document.getElementById('itemLink').value = '';
-    selectedItemEmoji = '📊';
+    selectedItemEmoji = 'chart';
     renderEmojiGrid('itemEmojiGrid', 'item');
     document.getElementById('itemModal').classList.add('active');
     setTimeout(() => document.getElementById('itemTitle').focus(), 100);
@@ -744,7 +819,7 @@
     document.getElementById('itemTitle').value = item.title;
     document.getElementById('itemDesc').value = item.desc || '';
     document.getElementById('itemLink').value = item.link || '';
-    selectedItemEmoji = item.icon || '📊';
+    selectedItemEmoji = item.icon || 'chart';
     renderEmojiGrid('itemEmojiGrid', 'item');
     document.getElementById('itemModal').classList.add('active');
   }
@@ -791,13 +866,14 @@
     const grid = document.getElementById(elementId);
     grid.innerHTML = '';
     const selected = type === 'category' ? selectedCategoryEmoji : selectedItemEmoji;
-    EMOJIS.forEach(emoji => {
+    ICON_LIST.forEach(icon => {
       const btn = document.createElement('button');
-      btn.className = 'emoji-btn' + (emoji === selected ? ' selected' : '');
-      btn.textContent = emoji;
+      btn.className = 'emoji-btn' + (icon.id === selected ? ' selected' : '');
+      btn.title = icon.name;
+      btn.innerHTML = getIconSvg(icon.id);
       btn.onclick = () => {
-        if (type === 'category') selectedCategoryEmoji = emoji;
-        else selectedItemEmoji = emoji;
+        if (type === 'category') selectedCategoryEmoji = icon.id;
+        else selectedItemEmoji = icon.id;
         renderEmojiGrid(elementId, type);
       };
       grid.appendChild(btn);
