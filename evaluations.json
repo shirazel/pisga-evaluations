@@ -1,0 +1,33 @@
+{
+  "categories": [
+    {
+      "id": "district-survey",
+      "title": "ניתוח שאלון מחוזי",
+      "desc": "דוחות משוב וניתוחים של שאלונים שהועברו לרכזים ובעלי תפקידים במחוז",
+      "icon": "chart",
+      "items": [
+        {
+          "id": 1,
+          "title": "רכזות חינוך לשוני",
+          "desc": "דוח משוב מחוזי - סיכום מנהלים, ניתוח אחוזים ומשובים מילוליים",
+          "icon": "graduation",
+          "link": "https://sites.google.com/pisgah.org.il/miryam/district-feedback"
+        },
+        {
+          "id": 2,
+          "title": "בתי ספר המכילים",
+          "desc": "",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/mechilim.html",
+          "icon": "chart"
+        }
+      ]
+    },
+    {
+      "id": "pisga-bitnua",
+      "title": "ניתוח סדנאות פסג\"ה בתנועה",
+      "desc": "משובים וניתוחים של סדנאות וההשתלמויות במסגרת פסג\"ה בתנועה",
+      "icon": "target",
+      "items": []
+    }
+  ]
+}
