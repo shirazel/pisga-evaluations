@@ -330,11 +330,8 @@
   .file-icon { font-size: 1.5rem; }
   .file-text { flex: 1; font-weight: 500; }
 
-  /* כפתור העתקת קישור */
+  /* כפתור העתקת קישור - ממוקם אחרי כפתורי edit/delete */
   .copy-link-btn {
-    position: absolute;
-    top: 12px;
-    left: 52px;
     width: 32px; height: 32px;
     border-radius: 8px;
     border: none;
@@ -347,9 +344,8 @@
     font-size: 14px;
     color: var(--orange);
     transition: all 0.2s ease;
-    z-index: 5;
   }
-  body.admin-mode .copy-link-btn { display: flex; }
+  body.admin-mode .card-actions .copy-link-btn { display: flex; }
   .copy-link-btn:hover { transform: scale(1.1); }
   .copy-link-btn.copied { background: var(--green); color: var(--white); }
   .emoji-btn {
@@ -658,10 +654,10 @@
   let selectedFileContent = null;
 
   function loadSession() {
-    try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; }
+    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; }
   }
-  function saveSession(token) { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ token })); }
-  function clearSession() { sessionStorage.removeItem(SESSION_KEY); }
+  function saveSession(token) { localStorage.setItem(SESSION_KEY, JSON.stringify({ token })); }
+  function clearSession() { localStorage.removeItem(SESSION_KEY); }
   function isAdmin() { const s = loadSession(); return s && s.token; }
   function getToken() { const s = loadSession(); return s ? s.token : null; }
 
@@ -827,9 +823,9 @@
         cardEl.innerHTML = `
           <div class="card-actions">
             <button class="action-btn edit" onclick="editItem(event, '${cat.id}', ${item.id})" title="עריכה">✏️</button>
+            <button class="copy-link-btn" onclick="copyItemLink(event, ${item.id})" title="העתקת קישור" data-id="${item.id}">🔗</button>
             <button class="action-btn delete" onclick="deleteItem(event, '${cat.id}', ${item.id})" title="מחיקה">🗑️</button>
           </div>
-          <button class="copy-link-btn" onclick="copyItemLink(event, ${item.id})" title="העתקת קישור" data-id="${item.id}">🔗</button>
           <div class="card-icon">${getIconSvg(item.icon)}</div>
           <h3 class="card-title">${escapeHtml(item.title)}</h3>
           <p class="card-desc">${escapeHtml(item.desc || '')}</p>
@@ -948,9 +944,11 @@
     selectedItemEmoji = item.icon || 'chart';
     selectedFile = null;
     selectedFileContent = null;
-    // בעריכה - תמיד מצב קישור (אי אפשר להחליף קובץ קיים, רק קישור)
+    document.getElementById('itemFile').value = '';
+    document.getElementById('fileText').textContent = 'לחצי לבחירת קובץ HTML חדש (אופציונלי)';
+    document.querySelector('.file-input-label').classList.remove('has-file');
     switchMode('link');
-    document.querySelector('.mode-tabs').style.display = 'none';
+    document.querySelector('.mode-tabs').style.display = 'flex';
     renderEmojiGrid('itemEmojiGrid', 'item');
     document.getElementById('itemModal').classList.add('active');
   }
@@ -1066,16 +1064,31 @@
     const saveBtn = document.getElementById('saveItemBtn');
 
     if (editingItem) {
-      // בעריכה - תמיד מצב קישור
-      link = document.getElementById('itemLink').value.trim();
-      if (!link) { showToast('יש להזין קישור', 'error'); return; }
+      // בעריכה - אם נבחר קובץ חדש, מעלים אותו; אחרת משתמשים בקישור
+      if (itemFormMode === 'upload' && selectedFile && selectedFileContent) {
+        // העלאת קובץ חדש שמחליף את הקיים
+        saveBtn.textContent = 'מעלה קובץ...';
+        saveBtn.disabled = true;
+        try {
+          const filename = sanitizeFilename(selectedFile.name);
+          link = await uploadFileToGitHub(filename, selectedFileContent);
+        } catch (e) {
+          showToast('שגיאה בהעלאה: ' + e.message, 'error');
+          saveBtn.textContent = 'שמירה';
+          saveBtn.disabled = false;
+          return;
+        }
+        saveBtn.textContent = 'שומר...';
+      } else {
+        link = document.getElementById('itemLink').value.trim();
+        if (!link) { showToast('יש להזין קישור או לבחור קובץ', 'error'); return; }
+      }
     } else if (itemFormMode === 'upload') {
       // הוספה במצב העלאה
       if (!selectedFile || !selectedFileContent) {
         showToast('יש לבחור קובץ', 'error');
         return;
       }
-      // העלאת הקובץ ל-GitHub
       saveBtn.textContent = 'מעלה קובץ...';
       saveBtn.disabled = true;
       try {
@@ -1112,8 +1125,8 @@
     saveBtn.disabled = false;
     if (!ok) { data = oldData; refreshView(); }
     else {
-      if (itemFormMode === 'upload' && !editingItem) {
-        showToast('הקובץ הועלה והניתוח נוסף ✓', 'success');
+      if (itemFormMode === 'upload' && selectedFile) {
+        showToast(editingItem ? 'הקובץ הוחלף והניתוח עודכן ✓' : 'הקובץ הועלה והניתוח נוסף ✓', 'success');
       } else {
         showToast(editingItem ? 'הניתוח עודכן ✓' : 'הניתוח נוסף ✓', 'success');
       }
