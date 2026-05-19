@@ -48,7 +48,15 @@
       "title": "מנהלות פדגוגיה",
       "desc": "פעילויות צוות הפסג\"ה למנהלות ומנהלי פדגוגיה בהנחיית אביחי בן לאה וארי דינר",
       "icon": "clipboard",
-      "items": []
+      "items": [
+        {
+          "id": 1,
+          "title": "כנס מנהלות פדגוגיה",
+          "desc": "",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/Report.html",
+          "icon": "clipboard"
+        }
+      ]
     },
     {
       "id": "cat-3glje2",
