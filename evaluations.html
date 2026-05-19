@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ניתוחי הערכה | פסג"ה החדרה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&family=Assistant:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #F39C2C;
+    --orange-light: #FBB360;
+    --orange-soft: #FEF3E2;
+    --teal: #4FBDC4;
+    --teal-light: #7DD3D8;
+    --teal-soft: #E8F7F8;
+    --dark: #1F2937;
+    --gray: #6B7280;
+    --gray-light: #E5E7EB;
+    --bg: #FAFBFC;
+    --white: #FFFFFF;
+    --red: #EF4444;
+    --green: #10B981;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Heebo', 'Assistant', sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  .header {
+    background: var(--white);
+    padding: 50px 20px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--gray-light);
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, var(--orange-soft) 0%, transparent 70%);
+    border-radius: 50%; z-index: 0;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -150px; left: -100px;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, var(--teal-soft) 0%, transparent 70%);
+    border-radius: 50%; z-index: 0;
+  }
+  .header-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+  .logo-circle {
+    width: 80px; height: 80px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: conic-gradient(from 90deg, var(--orange) 0deg 180deg, var(--teal) 180deg 360deg);
+    position: relative;
+    box-shadow: 0 8px 24px rgba(243, 156, 44, 0.2), 0 8px 24px rgba(79, 189, 196, 0.2);
+  }
+  .logo-circle::before { content: ''; position: absolute; inset: 12px; background: var(--white); border-radius: 50%; }
+  .logo-circle::after {
+    content: ''; position: absolute; inset: 20px;
+    background: conic-gradient(from 90deg, var(--orange) 0deg 180deg, var(--teal) 180deg 360deg);
+    border-radius: 50%; opacity: 0.7;
+  }
+  .header h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900; color: var(--dark);
+    margin-bottom: 12px; letter-spacing: -1px;
+  }
+  .header h1 .accent-orange { color: var(--orange); }
+  .header h1 .accent-teal { color: var(--teal); }
+  .header .subtitle { font-size: 1.1rem; color: var(--gray); font-weight: 400; margin-bottom: 8px; }
+  .header .org-name { font-size: 0.95rem; color: var(--gray); font-weight: 500; letter-spacing: 0.5px; }
+  .divider-line {
+    width: 60px; height: 4px;
+    background: linear-gradient(90deg, var(--orange), var(--teal));
+    margin: 24px auto 0; border-radius: 2px;
+  }
+  .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px 120px; }
+  .section-title {
+    font-size: 1.75rem; font-weight: 700; color: var(--dark);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+  }
+  .section-title::before {
+    content: ''; width: 6px; height: 28px;
+    background: linear-gradient(180deg, var(--orange), var(--teal));
+    border-radius: 3px;
+  }
+  .section-desc { color: var(--gray); margin-bottom: 32px; margin-right: 18px; font-size: 1rem; }
+  .admin-banner {
+    display: none;
+    background: linear-gradient(135deg, var(--orange-soft), var(--teal-soft));
+    border-right: 4px solid var(--teal);
+    padding: 14px 20px; border-radius: 12px;
+    margin-bottom: 24px; font-size: 0.92rem; color: var(--dark);
+  }
+  body.admin-mode .admin-banner { display: block; }
+  .admin-banner strong { color: var(--teal); }
+  .sync-status { display: inline-flex; align-items: center; gap: 6px; margin-right: 12px; font-size: 0.85rem; color: var(--gray); }
+  .sync-status.syncing { color: var(--orange); }
+  .sync-status.success { color: var(--green); }
+  .sync-status.error { color: var(--red); }
+  .breadcrumb { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .back-btn {
+    background: var(--white); border: 1px solid var(--gray-light);
+    color: var(--dark); padding: 8px 16px; border-radius: 100px;
+    font-family: inherit; font-size: 0.9rem; font-weight: 500;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.2s ease;
+  }
+  .back-btn:hover { border-color: var(--teal); color: var(--teal); transform: translateX(4px); }
+  .categories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; }
+  .category-card {
+    background: var(--white); border-radius: 20px; padding: 36px 32px;
+    position: relative; overflow: hidden;
+    border: 1px solid var(--gray-light);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer; text-align: right; font-family: inherit; width: 100%;
+  }
+  .category-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.1); border-color: transparent; }
+  .category-card::before {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 100%; height: 6px;
+    background: linear-gradient(90deg, var(--orange), var(--teal));
+    transform: scaleX(0); transform-origin: right; transition: transform 0.4s ease;
+  }
+  .category-card:hover::before { transform: scaleX(1); }
+  .category-icon {
+    width: 64px; height: 64px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px; font-size: 32px;
+    background: linear-gradient(135deg, var(--orange-soft), var(--teal-soft));
+  }
+  .category-card:nth-child(3n+1) .category-icon { background: var(--orange-soft); }
+  .category-card:nth-child(3n+2) .category-icon { background: var(--teal-soft); }
+  .category-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 12px; color: var(--dark); }
+  .category-desc { color: var(--gray); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; min-height: 50px; }
+  .category-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid var(--gray-light); }
+  .category-count { background: var(--orange-soft); color: var(--orange); padding: 6px 14px; border-radius: 100px; font-size: 0.85rem; font-weight: 600; }
+  .category-card:nth-child(3n+2) .category-count { background: var(--teal-soft); color: var(--teal); }
+  .category-arrow { color: var(--teal); font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 6px; transition: gap 0.2s ease; }
+  .category-arrow::after { content: '←'; font-size: 1.2rem; }
+  .category-card:hover .category-arrow { gap: 12px; }
+  .category-actions { position: absolute; top: 12px; left: 12px; display: none; gap: 6px; z-index: 5; }
+  body.admin-mode .category-actions { display: flex; }
+  body.admin-mode .category-card { border: 2px dashed var(--gray-light); }
+  body.admin-mode .category-card:hover { transform: none; box-shadow: none; border-color: var(--orange); }
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+  .card {
+    background: var(--white); border-radius: 16px; padding: 28px;
+    position: relative; overflow: hidden; border: 1px solid var(--gray-light);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none; color: inherit; display: block; cursor: pointer;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); border-color: transparent; }
+  .card::before {
+    content: ''; position: absolute; top: 0; right: 0;
+    width: 100%; height: 4px;
+    background: linear-gradient(90deg, var(--orange), var(--teal));
+    transform: scaleX(0); transform-origin: right; transition: transform 0.4s ease;
+  }
+  .card:hover::before { transform: scaleX(1); }
+  .card-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px; font-size: 24px;
+    background: var(--orange-soft);
+  }
+  .card:nth-child(3n+2) .card-icon { background: var(--teal-soft); }
+  .card:nth-child(3n+3) .card-icon { background: linear-gradient(135deg, var(--orange-soft), var(--teal-soft)); }
+  .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
+  .card-desc { color: var(--gray); font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px; min-height: 45px; }
+  .card-link { display: inline-flex; align-items: center; gap: 6px; color: var(--teal); font-weight: 600; font-size: 0.9rem; transition: gap 0.2s ease; }
+  .card:hover .card-link { gap: 12px; }
+  .card-link::after { content: '←'; font-size: 1.1rem; }
+  .card-actions { position: absolute; top: 12px; left: 12px; display: none; gap: 6px; z-index: 5; }
+  body.admin-mode .card-actions { display: flex; }
+  body.admin-mode .card { cursor: default; border: 2px dashed var(--gray-light); }
+  body.admin-mode .card:hover { transform: none; box-shadow: none; border-color: var(--orange); }
+  .action-btn {
+    width: 32px; height: 32px; border-radius: 8px; border: none;
+    background: var(--white); box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 14px; transition: all 0.2s ease;
+  }
+  .action-btn:hover { transform: scale(1.1); }
+  .action-btn.edit { color: var(--teal); }
+  .action-btn.delete { color: var(--red); }
+  .add-btn-card {
+    background: transparent; border: 2px dashed var(--gray-light);
+    border-radius: 16px; padding: 28px;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; min-height: 220px; color: var(--gray);
+    cursor: pointer; font-family: inherit; font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  .add-btn-card.large { min-height: 260px; border-radius: 20px; padding: 36px 32px; }
+  body.admin-mode .add-btn-card { display: flex; }
+  .add-btn-card:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-soft); transform: translateY(-4px); }
+  .add-btn-card .plus { font-size: 2.5rem; margin-bottom: 8px; font-weight: 300; line-height: 1; }
+  .admin-toggle {
+    position: fixed; bottom: 24px; left: 24px;
+    background: var(--white); color: var(--gray);
+    border: 1px solid var(--gray-light);
+    padding: 10px 16px; border-radius: 100px;
+    font-family: inherit; font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 100; display: flex; align-items: center; gap: 6px;
+    transition: all 0.2s ease; opacity: 0.4;
+  }
+  .admin-toggle:hover { opacity: 1; transform: translateY(-2px); }
+  .admin-toggle.active {
+    background: linear-gradient(135deg, var(--orange), var(--teal));
+    color: var(--white); border-color: transparent; opacity: 1;
+  }
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(31, 41, 55, 0.6);
+    backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+    z-index: 200; padding: 20px; animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--white); border-radius: 20px; padding: 32px;
+    max-width: 520px; width: 100%;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+    max-height: 90vh; overflow-y: auto;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .modal-title { font-size: 1.4rem; font-weight: 700; color: var(--dark); }
+  .modal-close { background: var(--gray-light); border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 18px; color: var(--gray); }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; color: var(--dark); }
+  .form-group .help { font-size: 0.78rem; color: var(--gray); font-weight: 400; margin-top: 4px; line-height: 1.5; }
+  .form-group .help code { background: var(--orange-soft); padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.85rem; color: var(--orange); }
+  .form-group input, .form-group textarea {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid var(--gray-light);
+    border-radius: 10px; font-family: inherit;
+    font-size: 0.95rem; transition: border-color 0.2s ease;
+    background: var(--white);
+  }
+  .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--teal); }
+  .form-group textarea { resize: vertical; min-height: 70px; font-family: inherit; }
+  .emoji-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; margin-top: 8px; }
+  .emoji-btn { background: var(--bg); border: 2px solid transparent; border-radius: 8px; padding: 8px; font-size: 1.2rem; cursor: pointer; transition: all 0.15s ease; }
+  .emoji-btn:hover { background: var(--orange-soft); }
+  .emoji-btn.selected { border-color: var(--orange); background: var(--orange-soft); }
+  .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+  .btn { flex: 1; padding: 12px 20px; border-radius: 10px; border: none; font-family: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+  .btn-primary { background: linear-gradient(135deg, var(--orange), var(--teal)); color: var(--white); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .btn-secondary { background: var(--gray-light); color: var(--dark); }
+  .btn-danger { background: var(--red); color: var(--white); flex: 0; padding: 12px 16px; }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--gray); grid-column: 1 / -1; }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.5; }
+  .loading-state { text-align: center; padding: 60px 20px; color: var(--gray); grid-column: 1 / -1; }
+  .loading-spinner { width: 40px; height: 40px; margin: 0 auto 16px; border: 3px solid var(--gray-light); border-top-color: var(--orange); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .footer { background: var(--white); border-top: 1px solid var(--gray-light); padding: 30px 20px; text-align: center; color: var(--gray); font-size: 0.9rem; }
+  .footer-dots { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+  .footer-dots span { width: 8px; height: 8px; border-radius: 50%; }
+  .footer-dots span:nth-child(1) { background: var(--orange); }
+  .footer-dots span:nth-child(2) { background: var(--teal); }
+  .footer-dots span:nth-child(3) { background: var(--orange-light); }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .category-card, .card { animation: fadeInUp 0.4s ease-out backwards; }
+  .toast {
+    position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
+    background: var(--dark); color: var(--white);
+    padding: 12px 24px; border-radius: 100px;
+    font-size: 0.9rem; font-weight: 500;
+    opacity: 0; transition: all 0.3s ease;
+    pointer-events: none; z-index: 300;
+    max-width: 90%; text-align: center;
+  }
+  .toast.show { opacity: 1; bottom: 110px; }
+  .toast.error { background: var(--red); }
+  .toast.success { background: var(--green); }
+  .setup-info { background: var(--orange-soft); border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; font-size: 0.85rem; line-height: 1.6; color: var(--dark); }
+  @media (max-width: 600px) {
+    .header { padding: 40px 20px 30px; }
+    .container { padding: 40px 16px 120px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .categories-grid { grid-template-columns: 1fr; gap: 20px; }
+    .category-card { padding: 28px 24px; }
+    .emoji-grid { grid-template-columns: repeat(6, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-content">
+    <div class="logo-circle"></div>
+    <h1><span class="accent-orange">ניתוחי</span> <span class="accent-teal">הערכה</span></h1>
+    <p class="subtitle">מאגר מרוכז של ניתוחים, דוחות ומשובים</p>
+    <p class="org-name">פסג"ה החדרה · קהילת חינוך היברידית</p>
+    <div class="divider-line"></div>
+  </div>
+</header>
+
+<main class="container" id="mainContent">
+  <div class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>טוען...</p>
+  </div>
+</main>
+
+<button class="admin-toggle" id="adminToggle" onclick="handleAdminClick()">
+  <span id="adminIcon">🔒</span>
+  <span id="adminText">כניסת מנהלת</span>
+</button>
+
+<div class="modal-overlay" id="adminLoginModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">🔐 כניסת מנהלת</h3>
+      <button class="modal-close" onclick="closeAdminLoginModal()">✕</button>
+    </div>
+    <div class="setup-info">
+      💡 <strong>הזיני את הסיסמה ואת הטוקן.</strong> הם נשמרים בדפדפן שלך ולא נחשפים למבקרים. כשאת מתחברת פעם אחת - לא צריך להזין שוב עד שתעשי "יציאה".
+    </div>
+    <div class="form-group">
+      <label for="loginPassword">סיסמה</label>
+      <input type="password" id="loginPassword" placeholder="הסיסמה שלך" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label for="loginToken">Personal Access Token (מ-GitHub)</label>
+      <input type="password" id="loginToken" placeholder="ghp_..." autocomplete="off">
+      <div class="help">
+        מ-GitHub.com: Settings → Developer settings → Personal access tokens (classic) → Generate new token → סמני <code>repo</code>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" onclick="logoutAdmin()" id="logoutBtn" style="display:none;">יציאה</button>
+      <button class="btn btn-secondary" onclick="closeAdminLoginModal()">ביטול</button>
+      <button class="btn btn-primary" onclick="loginAdmin()">כניסה</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="categoryModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="categoryModalTitle">הוספת קטגוריה</h3>
+      <button class="modal-close" onclick="closeCategoryModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label for="catTitle">שם הקטגוריה *</label>
+      <input type="text" id="catTitle" placeholder="לדוגמה: ניתוח שאלון מחוזי">
+    </div>
+    <div class="form-group">
+      <label for="catDesc">תיאור קצר</label>
+      <textarea id="catDesc" placeholder="תיאור קצר על הקטגוריה..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>אייקון</label>
+      <div class="emoji-grid" id="catEmojiGrid"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeCategoryModal()">ביטול</button>
+      <button class="btn btn-primary" onclick="saveCategory()">שמירה</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="itemModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="itemModalTitle">הוספת ניתוח</h3>
+      <button class="modal-close" onclick="closeItemModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label for="itemTitle">כותרת *</label>
+      <input type="text" id="itemTitle" placeholder="לדוגמה: רכזות חינוך לשוני">
+    </div>
+    <div class="form-group">
+      <label for="itemDesc">תיאור קצר</label>
+      <textarea id="itemDesc" placeholder="תיאור קצר על הניתוח..."></textarea>
+    </div>
+    <div class="form-group">
+      <label for="itemLink">קישור *</label>
+      <input type="url" id="itemLink" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label>אייקון</label>
+      <div class="emoji-grid" id="itemEmojiGrid"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeItemModal()">ביטול</button>
+      <button class="btn btn-primary" onclick="saveItem()">שמירה</button>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-dots">
+    <span></span><span></span><span></span>
+  </div>
+  <p>פסג"ה החדרה · קהילת חינוך היברידית</p>
+</footer>
+
+<div class="toast" id="toast">נשמר</div>
+
+<script>
+  // ╔═════════════════════════════════════════════════════════════════╗
+  // ║   ⚙️ הגדרות - לעדכן לפי הפרטים שלך                              ║
+  // ╚═════════════════════════════════════════════════════════════════╝
+  
+  // 1️⃣ הסיסמה שלך לכניסת מנהלת
+  const ADMIN_PASSWORD = 'shiraz1234';
+  
+  // 2️⃣ שם המשתמש שלך ב-GitHub (כפי שמופיע ב-URL: github.com/SHIRA)
+  const GITHUB_USER = 'shirazel';
+  
+  // 3️⃣ שם המאגר שיצרת ב-GitHub (לדוגמה: pisga-evaluations)
+  const GITHUB_REPO = 'pisga-evaluations';
+  
+  // ╔═════════════════════════════════════════════════════════════════╗
+
+  const DATA_FILE_PATH = 'evaluations.json';
+  const SESSION_KEY = 'pisga_admin_session_v2';
+  const EMOJIS = ['📊','📈','📋','📝','📑','📚','🎯','⭐','💡','🔍','📌','🎓','📂','✨','🏆','📅','🗂️','📰','🎨','🌟','💬','🧩','🔔','📣'];
+
+  const defaultData = {
+    categories: [
+      {
+        id: 'district-survey',
+        title: 'ניתוח שאלון מחוזי',
+        desc: 'דוחות משוב וניתוחים של שאלונים שהועברו לרכזים ובעלי תפקידים במחוז',
+        icon: '📊',
+        items: [
+          { id: 1, title: 'רכזות חינוך לשוני', desc: 'דוח משוב מחוזי - סיכום מנהלים, ניתוח אחוזים ומשובים מילוליים', icon: '🎓', link: 'https://sites.google.com/pisgah.org.il/miryam/district-feedback' }
+        ]
+      },
+      {
+        id: 'pisga-bitnua',
+        title: 'ניתוח סדנאות פסג"ה בתנועה',
+        desc: 'משובים וניתוחים של סדנאות וההשתלמויות במסגרת פסג"ה בתנועה',
+        icon: '🎯',
+        items: []
+      }
+    ]
+  };
+
+  let data = { categories: [] };
+  let editingCategoryId = null;
+  let editingItem = null;
+  let currentItemCategoryId = null;
+  let currentView = 'home';
+  let selectedCategoryEmoji = '📁';
+  let selectedItemEmoji = '📊';
+
+  function loadSession() {
+    try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; }
+  }
+  function saveSession(token) { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ token })); }
+  function clearSession() { sessionStorage.removeItem(SESSION_KEY); }
+  function isAdmin() { const s = loadSession(); return s && s.token; }
+  function getToken() { const s = loadSession(); return s ? s.token : null; }
+
+  function getPublicDataUrl() {
+    return `https://raw.githubusercontent.com/${GITHUB_USER}/${GITHUB_REPO}/main/${DATA_FILE_PATH}?t=${Date.now()}`;
+  }
+  function getApiUrl() {
+    return `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${DATA_FILE_PATH}`;
+  }
+
+  async function fetchData() {
+    try {
+      const response = await fetch(getPublicDataUrl(), { cache: 'no-store' });
+      if (response.ok) {
+        const loaded = await response.json();
+        data = loaded && Array.isArray(loaded.categories) ? loaded : JSON.parse(JSON.stringify(defaultData));
+      } else if (response.status === 404) {
+        data = JSON.parse(JSON.stringify(defaultData));
+      } else {
+        throw new Error('שגיאת טעינה');
+      }
+    } catch (e) {
+      console.warn('Loading defaults:', e);
+      data = JSON.parse(JSON.stringify(defaultData));
+    }
+  }
+
+  async function saveData() {
+    if (!isAdmin()) { showToast('נדרשת כניסת מנהלת', 'error'); return false; }
+    updateSyncStatus('syncing', 'שומר...');
+    try {
+      let sha = null;
+      try {
+        const r = await fetch(getApiUrl(), {
+          headers: { 'Authorization': `token ${getToken()}`, 'Accept': 'application/vnd.github.v3+json' }
+        });
+        if (r.ok) sha = (await r.json()).sha;
+      } catch (e) {}
+      const content = JSON.stringify(data, null, 2);
+      const encoded = btoa(unescape(encodeURIComponent(content)));
+      const body = { message: 'Update evaluations', content: encoded, branch: 'main' };
+      if (sha) body.sha = sha;
+      const response = await fetch(getApiUrl(), {
+        method: 'PUT',
+        headers: { 'Authorization': `token ${getToken()}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || `שגיאה ${response.status}`);
+      }
+      updateSyncStatus('success', '✓ נשמר ב-GitHub');
+      setTimeout(() => updateSyncStatus('', ''), 3000);
+      return true;
+    } catch (e) {
+      console.error(e);
+      updateSyncStatus('error', '✗ שגיאה');
+      showToast('שמירה נכשלה: ' + e.message, 'error');
+      return false;
+    }
+  }
+
+  function updateSyncStatus(state, text) {
+    const el = document.getElementById('syncStatus');
+    if (!el) return;
+    el.className = 'sync-status' + (state ? ' ' + state : '');
+    el.textContent = text;
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  function generateId(title) {
+    const slug = (title || 'category').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 20) || 'cat';
+    return slug + '-' + Math.random().toString(36).substr(2, 6);
+  }
+
+  function renderHome() {
+    currentView = 'home';
+    const main = document.getElementById('mainContent');
+    main.innerHTML = `
+      <div class="admin-banner">
+        🔓 <strong>מצב מנהלת פעיל</strong> · השינויים שלך נשמרים ל-GitHub ומופיעים לכולם מיד
+        <span class="sync-status" id="syncStatus"></span>
+      </div>
+      <h2 class="section-title">תחומי הערכה</h2>
+      <p class="section-desc">בחרי קטגוריה כדי לראות את כל הניתוחים בתחום</p>
+      <div class="categories-grid" id="categoriesGrid"></div>
+    `;
+    const grid = document.getElementById('categoriesGrid');
+    if (!data.categories || data.categories.length === 0) {
+      if (!isAdmin()) {
+        grid.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>אין עדיין קטגוריות</p></div>`;
+      }
+    } else {
+      data.categories.forEach((cat, index) => {
+        const count = cat.items ? cat.items.length : 0;
+        const countText = count === 0 ? 'אין ניתוחים' : count === 1 ? 'ניתוח אחד' : `${count} ניתוחים`;
+        const btn = document.createElement('button');
+        btn.className = 'category-card';
+        btn.style.animationDelay = (index * 0.06) + 's';
+        btn.onclick = (e) => {
+          if (e.target.closest('.category-actions')) return;
+          showCategory(cat.id);
+        };
+        btn.innerHTML = `
+          <div class="category-actions">
+            <button class="action-btn edit" onclick="editCategory(event, '${cat.id}')" title="עריכה">✏️</button>
+            <button class="action-btn delete" onclick="deleteCategory(event, '${cat.id}')" title="מחיקה">🗑️</button>
+          </div>
+          <div class="category-icon">${cat.icon || '📁'}</div>
+          <h3 class="category-title">${escapeHtml(cat.title)}</h3>
+          <p class="category-desc">${escapeHtml(cat.desc || '')}</p>
+          <div class="category-meta">
+            <span class="category-count">${countText}</span>
+            <span class="category-arrow">לכניסה</span>
+          </div>
+        `;
+        grid.appendChild(btn);
+      });
+    }
+    if (isAdmin()) {
+      const addBtn = document.createElement('button');
+      addBtn.className = 'add-btn-card large';
+      addBtn.onclick = openAddCategoryModal;
+      addBtn.innerHTML = `<div class="plus">+</div><div>הוספת קטגוריה חדשה</div>`;
+      grid.appendChild(addBtn);
+    }
+  }
+
+  function showCategory(categoryId) {
+    const cat = data.categories.find(c => c.id === categoryId);
+    if (!cat) { renderHome(); return; }
+    currentView = categoryId;
+    window.location.hash = categoryId;
+    const main = document.getElementById('mainContent');
+    main.innerHTML = `
+      <div class="breadcrumb">
+        <button class="back-btn" onclick="goHome()"><span>→</span><span>חזרה לתחומי הערכה</span></button>
+      </div>
+      <div class="admin-banner">
+        🔓 <strong>מצב מנהלת פעיל</strong> · השינויים שלך נשמרים ל-GitHub ומופיעים לכולם מיד
+        <span class="sync-status" id="syncStatus"></span>
+      </div>
+      <h2 class="section-title">${escapeHtml(cat.title)}</h2>
+      <p class="section-desc">${escapeHtml(cat.desc || '')}</p>
+      <div class="cards-grid" id="cardsGrid"></div>
+    `;
+    const grid = document.getElementById('cardsGrid');
+    const items = cat.items || [];
+    if (items.length === 0 && !isAdmin()) {
+      grid.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>אין עדיין ניתוחים בקטגוריה זו</p></div>`;
+    } else {
+      items.forEach((item, index) => {
+        const cardEl = document.createElement('a');
+        cardEl.className = 'card';
+        cardEl.href = item.link || '#';
+        cardEl.target = '_blank';
+        cardEl.rel = 'noopener noreferrer';
+        cardEl.style.animationDelay = (index * 0.05) + 's';
+        cardEl.innerHTML = `
+          <div class="card-actions">
+            <button class="action-btn edit" onclick="editItem(event, '${cat.id}', ${item.id})" title="עריכה">✏️</button>
+            <button class="action-btn delete" onclick="deleteItem(event, '${cat.id}', ${item.id})" title="מחיקה">🗑️</button>
+          </div>
+          <div class="card-icon">${item.icon || '📊'}</div>
+          <h3 class="card-title">${escapeHtml(item.title)}</h3>
+          <p class="card-desc">${escapeHtml(item.desc || '')}</p>
+          <span class="card-link">לפתיחת הניתוח</span>
+        `;
+        cardEl.addEventListener('click', (e) => {
+          if (document.body.classList.contains('admin-mode')) e.preventDefault();
+        });
+        grid.appendChild(cardEl);
+      });
+    }
+    if (isAdmin()) {
+      const addBtn = document.createElement('button');
+      addBtn.className = 'add-btn-card';
+      addBtn.onclick = () => openAddItemModal(cat.id);
+      addBtn.innerHTML = `<div class="plus">+</div><div>הוספת ניתוח חדש</div>`;
+      grid.appendChild(addBtn);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goHome() { window.location.hash = ''; renderHome(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  function refreshView() { if (currentView === 'home') renderHome(); else showCategory(currentView); }
+
+  function openAddCategoryModal() {
+    editingCategoryId = null;
+    document.getElementById('categoryModalTitle').textContent = 'הוספת קטגוריה חדשה';
+    document.getElementById('catTitle').value = '';
+    document.getElementById('catDesc').value = '';
+    selectedCategoryEmoji = '📁';
+    renderEmojiGrid('catEmojiGrid', 'category');
+    document.getElementById('categoryModal').classList.add('active');
+    setTimeout(() => document.getElementById('catTitle').focus(), 100);
+  }
+
+  function editCategory(event, id) {
+    event.preventDefault(); event.stopPropagation();
+    const cat = data.categories.find(c => c.id === id);
+    if (!cat) return;
+    editingCategoryId = id;
+    document.getElementById('categoryModalTitle').textContent = 'עריכת קטגוריה';
+    document.getElementById('catTitle').value = cat.title;
+    document.getElementById('catDesc').value = cat.desc || '';
+    selectedCategoryEmoji = cat.icon || '📁';
+    renderEmojiGrid('catEmojiGrid', 'category');
+    document.getElementById('categoryModal').classList.add('active');
+  }
+
+  async function deleteCategory(event, id) {
+    event.preventDefault(); event.stopPropagation();
+    const cat = data.categories.find(c => c.id === id);
+    if (!cat) return;
+    const itemCount = cat.items ? cat.items.length : 0;
+    const msg = itemCount > 0 ? `הקטגוריה כוללת ${itemCount} ניתוחים. למחוק הכל?` : 'למחוק את הקטגוריה?';
+    if (!confirm(msg)) return;
+    const oldData = JSON.parse(JSON.stringify(data));
+    data.categories = data.categories.filter(c => c.id !== id);
+    refreshView();
+    const ok = await saveData();
+    if (!ok) { data = oldData; refreshView(); }
+    else showToast('הקטגוריה נמחקה ✓', 'success');
+  }
+
+  function closeCategoryModal() { document.getElementById('categoryModal').classList.remove('active'); }
+
+  async function saveCategory() {
+    const title = document.getElementById('catTitle').value.trim();
+    const desc = document.getElementById('catDesc').value.trim();
+    if (!title) { showToast('יש להזין שם קטגוריה', 'error'); return; }
+    const oldData = JSON.parse(JSON.stringify(data));
+    if (editingCategoryId !== null) {
+      const cat = data.categories.find(c => c.id === editingCategoryId);
+      if (cat) { cat.title = title; cat.desc = desc; cat.icon = selectedCategoryEmoji; }
+    } else {
+      data.categories.push({ id: generateId(title), title, desc, icon: selectedCategoryEmoji, items: [] });
+    }
+    refreshView();
+    closeCategoryModal();
+    const ok = await saveData();
+    if (!ok) { data = oldData; refreshView(); }
+    else showToast(editingCategoryId !== null ? 'הקטגוריה עודכנה ✓' : 'הקטגוריה נוספה ✓', 'success');
+  }
+
+  function openAddItemModal(categoryId) {
+    editingItem = null;
+    currentItemCategoryId = categoryId;
+    document.getElementById('itemModalTitle').textContent = 'הוספת ניתוח חדש';
+    document.getElementById('itemTitle').value = '';
+    document.getElementById('itemDesc').value = '';
+    document.getElementById('itemLink').value = '';
+    selectedItemEmoji = '📊';
+    renderEmojiGrid('itemEmojiGrid', 'item');
+    document.getElementById('itemModal').classList.add('active');
+    setTimeout(() => document.getElementById('itemTitle').focus(), 100);
+  }
+
+  function editItem(event, categoryId, itemId) {
+    event.preventDefault(); event.stopPropagation();
+    const cat = data.categories.find(c => c.id === categoryId);
+    if (!cat) return;
+    const item = cat.items.find(i => i.id === itemId);
+    if (!item) return;
+    editingItem = { categoryId, itemId };
+    currentItemCategoryId = categoryId;
+    document.getElementById('itemModalTitle').textContent = 'עריכת ניתוח';
+    document.getElementById('itemTitle').value = item.title;
+    document.getElementById('itemDesc').value = item.desc || '';
+    document.getElementById('itemLink').value = item.link || '';
+    selectedItemEmoji = item.icon || '📊';
+    renderEmojiGrid('itemEmojiGrid', 'item');
+    document.getElementById('itemModal').classList.add('active');
+  }
+
+  async function deleteItem(event, categoryId, itemId) {
+    event.preventDefault(); event.stopPropagation();
+    if (!confirm('למחוק את הניתוח?')) return;
+    const oldData = JSON.parse(JSON.stringify(data));
+    const cat = data.categories.find(c => c.id === categoryId);
+    if (cat) cat.items = cat.items.filter(i => i.id !== itemId);
+    refreshView();
+    const ok = await saveData();
+    if (!ok) { data = oldData; refreshView(); }
+    else showToast('הניתוח נמחק ✓', 'success');
+  }
+
+  function closeItemModal() { document.getElementById('itemModal').classList.remove('active'); }
+
+  async function saveItem() {
+    const title = document.getElementById('itemTitle').value.trim();
+    const desc = document.getElementById('itemDesc').value.trim();
+    const link = document.getElementById('itemLink').value.trim();
+    if (!title) { showToast('יש להזין כותרת', 'error'); return; }
+    if (!link) { showToast('יש להזין קישור', 'error'); return; }
+    const oldData = JSON.parse(JSON.stringify(data));
+    const cat = data.categories.find(c => c.id === currentItemCategoryId);
+    if (!cat) { showToast('שגיאה', 'error'); return; }
+    if (!cat.items) cat.items = [];
+    if (editingItem) {
+      const item = cat.items.find(i => i.id === editingItem.itemId);
+      if (item) { item.title = title; item.desc = desc; item.link = link; item.icon = selectedItemEmoji; }
+    } else {
+      const newId = cat.items.length ? Math.max(...cat.items.map(i => i.id)) + 1 : 1;
+      cat.items.push({ id: newId, title, desc, link, icon: selectedItemEmoji });
+    }
+    refreshView();
+    closeItemModal();
+    const ok = await saveData();
+    if (!ok) { data = oldData; refreshView(); }
+    else showToast(editingItem ? 'הניתוח עודכן ✓' : 'הניתוח נוסף ✓', 'success');
+  }
+
+  function renderEmojiGrid(elementId, type) {
+    const grid = document.getElementById(elementId);
+    grid.innerHTML = '';
+    const selected = type === 'category' ? selectedCategoryEmoji : selectedItemEmoji;
+    EMOJIS.forEach(emoji => {
+      const btn = document.createElement('button');
+      btn.className = 'emoji-btn' + (emoji === selected ? ' selected' : '');
+      btn.textContent = emoji;
+      btn.onclick = () => {
+        if (type === 'category') selectedCategoryEmoji = emoji;
+        else selectedItemEmoji = emoji;
+        renderEmojiGrid(elementId, type);
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  function handleAdminClick() {
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginToken').value = isAdmin() ? getToken() : '';
+    document.getElementById('logoutBtn').style.display = isAdmin() ? 'block' : 'none';
+    document.getElementById('adminLoginModal').classList.add('active');
+    setTimeout(() => document.getElementById('loginPassword').focus(), 100);
+  }
+
+  async function loginAdmin() {
+    const pwd = document.getElementById('loginPassword').value;
+    const token = document.getElementById('loginToken').value.trim();
+    if (pwd !== ADMIN_PASSWORD) { showToast('סיסמה שגויה', 'error'); return; }
+    if (!token) { showToast('יש להזין טוקן', 'error'); return; }
+    showToast('בודק טוקן...', '');
+    try {
+      const r = await fetch(`https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}`, {
+        headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!r.ok) throw new Error('הטוקן לא תקין או אין לו גישה למאגר');
+    } catch (e) { showToast(e.message, 'error'); return; }
+    saveSession(token);
+    document.body.classList.add('admin-mode');
+    updateAdminButton();
+    closeAdminLoginModal();
+    showToast('ברוכה הבאה ✓', 'success');
+    await fetchData();
+    refreshView();
+  }
+
+  function logoutAdmin() {
+    if (confirm('לצאת ממצב מנהלת?')) {
+      clearSession();
+      document.body.classList.remove('admin-mode');
+      updateAdminButton();
+      closeAdminLoginModal();
+      refreshView();
+      showToast('יצאת ממצב מנהלת', '');
+    }
+  }
+
+  function updateAdminButton() {
+    const btn = document.getElementById('adminToggle');
+    const icon = document.getElementById('adminIcon');
+    const text = document.getElementById('adminText');
+    if (isAdmin()) { btn.classList.add('active'); icon.textContent = '🔓'; text.textContent = 'מצב מנהלת'; }
+    else { btn.classList.remove('active'); icon.textContent = '🔒'; text.textContent = 'כניסת מנהלת'; }
+  }
+
+  function closeAdminLoginModal() { document.getElementById('adminLoginModal').classList.remove('active'); }
+
+  function showToast(message, type) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast' + (type ? ' ' + type : '');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  document.getElementById('adminLoginModal').addEventListener('click', (e) => { if (e.target.id === 'adminLoginModal') closeAdminLoginModal(); });
+  document.getElementById('categoryModal').addEventListener('click', (e) => { if (e.target.id === 'categoryModal') closeCategoryModal(); });
+  document.getElementById('itemModal').addEventListener('click', (e) => { if (e.target.id === 'itemModal') closeItemModal(); });
+  document.getElementById('loginPassword').addEventListener('keypress', (e) => { if (e.key === 'Enter') document.getElementById('loginToken').focus(); });
+  document.getElementById('loginToken').addEventListener('keypress', (e) => { if (e.key === 'Enter') loginAdmin(); });
+
+  window.addEventListener('hashchange', () => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash && data.categories.find(c => c.id === hash)) showCategory(hash);
+    else renderHome();
+  });
+
+  (async function init() {
+    updateAdminButton();
+    if (isAdmin()) document.body.classList.add('admin-mode');
+    await fetchData();
+    const hash = window.location.hash.replace('#', '');
+    if (hash && data.categories.find(c => c.id === hash)) showCategory(hash);
+    else renderHome();
+  })();
+</script>
+
+</body>
+</html>
