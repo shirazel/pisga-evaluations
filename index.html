@@ -264,6 +264,94 @@
   .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--teal); }
   .form-group textarea { resize: vertical; min-height: 70px; font-family: inherit; }
   .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 8px; }
+
+  /* טאבים של בחירת מצב */
+  .mode-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 12px;
+  }
+  .mode-tab {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .mode-tab.active {
+    background: var(--white);
+    color: var(--dark);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .mode-tab:hover:not(.active) { color: var(--dark); }
+
+  /* שדה העלאת קובץ */
+  .file-input-wrapper { position: relative; }
+  .file-input-wrapper input[type="file"] {
+    position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;
+  }
+  .file-input-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    border: 2px dashed var(--gray-light);
+    border-radius: 12px;
+    background: var(--bg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    font-size: 0.95rem;
+  }
+  .file-input-label:hover {
+    border-color: var(--teal);
+    background: var(--teal-soft);
+    color: var(--teal);
+  }
+  .file-input-label.has-file {
+    border-color: var(--green);
+    background: rgba(16, 185, 129, 0.05);
+    color: var(--dark);
+    border-style: solid;
+  }
+  .file-icon { font-size: 1.5rem; }
+  .file-text { flex: 1; font-weight: 500; }
+
+  /* כפתור העתקת קישור */
+  .copy-link-btn {
+    position: absolute;
+    top: 12px;
+    left: 52px;
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: var(--white);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--orange);
+    transition: all 0.2s ease;
+    z-index: 5;
+  }
+  body.admin-mode .copy-link-btn { display: flex; }
+  .copy-link-btn:hover { transform: scale(1.1); }
+  .copy-link-btn.copied { background: var(--green); color: var(--white); }
   .emoji-btn {
     background: var(--white); border: 1.5px solid var(--gray-light); border-radius: 12px;
     padding: 10px; cursor: pointer; transition: all 0.15s ease;
@@ -398,6 +486,37 @@
       <h3 class="modal-title" id="itemModalTitle">הוספת ניתוח</h3>
       <button class="modal-close" onclick="closeItemModal()">✕</button>
     </div>
+
+    <!-- בחירת מצב: העלאת קובץ או קישור חיצוני -->
+    <div class="mode-tabs" id="modeTabs">
+      <button class="mode-tab active" data-mode="upload" onclick="switchMode('upload')">
+        <span>📤</span> העלאת קובץ HTML
+      </button>
+      <button class="mode-tab" data-mode="link" onclick="switchMode('link')">
+        <span>🔗</span> קישור חיצוני
+      </button>
+    </div>
+
+    <!-- מצב העלאת קובץ -->
+    <div class="form-group" id="uploadGroup">
+      <label for="itemFile">קובץ HTML *</label>
+      <div class="file-input-wrapper">
+        <input type="file" id="itemFile" accept=".html,.htm" onchange="handleFileSelect(event)">
+        <label for="itemFile" class="file-input-label">
+          <span class="file-icon">📄</span>
+          <span class="file-text" id="fileText">לחצי לבחירת קובץ HTML</span>
+        </label>
+      </div>
+      <div class="help">הקובץ יעלה ל-GitHub שלך וייווצר קישור עצמאי שאפשר לשלוח</div>
+    </div>
+
+    <!-- מצב קישור חיצוני -->
+    <div class="form-group" id="linkGroup" style="display:none;">
+      <label for="itemLink">קישור *</label>
+      <input type="url" id="itemLink" placeholder="https://...">
+      <div class="help">לקישורים לאתרים חיצוניים (גוגל סייט, דרייב וכו')</div>
+    </div>
+
     <div class="form-group">
       <label for="itemTitle">כותרת *</label>
       <input type="text" id="itemTitle" placeholder="לדוגמה: רכזות חינוך לשוני">
@@ -407,16 +526,12 @@
       <textarea id="itemDesc" placeholder="תיאור קצר על הניתוח..."></textarea>
     </div>
     <div class="form-group">
-      <label for="itemLink">קישור *</label>
-      <input type="url" id="itemLink" placeholder="https://...">
-    </div>
-    <div class="form-group">
       <label>אייקון</label>
       <div class="emoji-grid" id="itemEmojiGrid"></div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeItemModal()">ביטול</button>
-      <button class="btn btn-primary" onclick="saveItem()">שמירה</button>
+      <button class="btn btn-primary" onclick="saveItem()" id="saveItemBtn">שמירה</button>
     </div>
   </div>
 </div>
@@ -538,6 +653,9 @@
   let currentView = 'home';
   let selectedCategoryEmoji = 'folder';
   let selectedItemEmoji = 'chart';
+  let itemFormMode = 'upload'; // 'upload' או 'link'
+  let selectedFile = null;
+  let selectedFileContent = null;
 
   function loadSession() {
     try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; }
@@ -711,6 +829,7 @@
             <button class="action-btn edit" onclick="editItem(event, '${cat.id}', ${item.id})" title="עריכה">✏️</button>
             <button class="action-btn delete" onclick="deleteItem(event, '${cat.id}', ${item.id})" title="מחיקה">🗑️</button>
           </div>
+          <button class="copy-link-btn" onclick="copyItemLink(event, ${item.id})" title="העתקת קישור" data-id="${item.id}">🔗</button>
           <div class="card-icon">${getIconSvg(item.icon)}</div>
           <h3 class="card-title">${escapeHtml(item.title)}</h3>
           <p class="card-desc">${escapeHtml(item.desc || '')}</p>
@@ -802,6 +921,13 @@
     document.getElementById('itemDesc').value = '';
     document.getElementById('itemLink').value = '';
     selectedItemEmoji = 'chart';
+    selectedFile = null;
+    selectedFileContent = null;
+    document.getElementById('itemFile').value = '';
+    document.getElementById('fileText').textContent = 'לחצי לבחירת קובץ HTML';
+    document.querySelector('.file-input-label').classList.remove('has-file');
+    switchMode('upload');
+    document.querySelector('.mode-tabs').style.display = 'flex';
     renderEmojiGrid('itemEmojiGrid', 'item');
     document.getElementById('itemModal').classList.add('active');
     setTimeout(() => document.getElementById('itemTitle').focus(), 100);
@@ -820,8 +946,50 @@
     document.getElementById('itemDesc').value = item.desc || '';
     document.getElementById('itemLink').value = item.link || '';
     selectedItemEmoji = item.icon || 'chart';
+    selectedFile = null;
+    selectedFileContent = null;
+    // בעריכה - תמיד מצב קישור (אי אפשר להחליף קובץ קיים, רק קישור)
+    switchMode('link');
+    document.querySelector('.mode-tabs').style.display = 'none';
     renderEmojiGrid('itemEmojiGrid', 'item');
     document.getElementById('itemModal').classList.add('active');
+  }
+
+  function switchMode(mode) {
+    itemFormMode = mode;
+    document.querySelectorAll('.mode-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.mode === mode);
+    });
+    document.getElementById('uploadGroup').style.display = mode === 'upload' ? 'block' : 'none';
+    document.getElementById('linkGroup').style.display = mode === 'link' ? 'block' : 'none';
+  }
+
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) {
+      selectedFile = null;
+      selectedFileContent = null;
+      document.getElementById('fileText').textContent = 'לחצי לבחירת קובץ HTML';
+      document.querySelector('.file-input-label').classList.remove('has-file');
+      return;
+    }
+    selectedFile = file;
+    document.getElementById('fileText').textContent = '✓ ' + file.name;
+    document.querySelector('.file-input-label').classList.add('has-file');
+
+    // קריאת התוכן של הקובץ
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      selectedFileContent = e.target.result;
+    };
+    reader.readAsText(file, 'UTF-8');
+
+    // אם הכותרת ריקה - לקחת את שם הקובץ
+    const titleInput = document.getElementById('itemTitle');
+    if (!titleInput.value) {
+      const nameWithoutExt = file.name.replace(/\.(html|htm)$/i, '').replace(/[_-]/g, ' ');
+      titleInput.value = nameWithoutExt;
+    }
   }
 
   async function deleteItem(event, categoryId, itemId) {
@@ -838,15 +1006,83 @@
 
   function closeItemModal() { document.getElementById('itemModal').classList.remove('active'); }
 
+  async function uploadFileToGitHub(filename, content) {
+    const filePath = 'reports/' + filename;
+    const apiUrl = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${encodeURIComponent(filePath)}`;
+    // בדיקה אם קובץ באותו שם כבר קיים
+    let sha = null;
+    try {
+      const r = await fetch(apiUrl, {
+        headers: { 'Authorization': `token ${getToken()}`, 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (r.ok) sha = (await r.json()).sha;
+    } catch (e) {}
+    // קידוד הקובץ ל-base64 עם תמיכה ב-UTF-8 (עברית)
+    const encoded = btoa(unescape(encodeURIComponent(content)));
+    const body = {
+      message: 'Upload report: ' + filename,
+      content: encoded,
+      branch: 'main'
+    };
+    if (sha) body.sha = sha;
+    const response = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: { 'Authorization': `token ${getToken()}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || 'שגיאה בהעלאת הקובץ');
+    }
+    // החזרת ה-URL הציבורי של הקובץ
+    return `https://${GITHUB_USER}.github.io/${GITHUB_REPO}/reports/${encodeURIComponent(filename)}`;
+  }
+
+  function sanitizeFilename(name) {
+    // הסרת תווים בעייתיים אבל שמירה על עברית
+    return name.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, '_').substring(0, 100);
+  }
+
   async function saveItem() {
     const title = document.getElementById('itemTitle').value.trim();
     const desc = document.getElementById('itemDesc').value.trim();
-    const link = document.getElementById('itemLink').value.trim();
     if (!title) { showToast('יש להזין כותרת', 'error'); return; }
-    if (!link) { showToast('יש להזין קישור', 'error'); return; }
+
+    let link = '';
+    const saveBtn = document.getElementById('saveItemBtn');
+
+    if (editingItem) {
+      // בעריכה - תמיד מצב קישור
+      link = document.getElementById('itemLink').value.trim();
+      if (!link) { showToast('יש להזין קישור', 'error'); return; }
+    } else if (itemFormMode === 'upload') {
+      // הוספה במצב העלאה
+      if (!selectedFile || !selectedFileContent) {
+        showToast('יש לבחור קובץ', 'error');
+        return;
+      }
+      // העלאת הקובץ ל-GitHub
+      saveBtn.textContent = 'מעלה קובץ...';
+      saveBtn.disabled = true;
+      try {
+        const filename = sanitizeFilename(selectedFile.name);
+        link = await uploadFileToGitHub(filename, selectedFileContent);
+      } catch (e) {
+        showToast('שגיאה בהעלאה: ' + e.message, 'error');
+        saveBtn.textContent = 'שמירה';
+        saveBtn.disabled = false;
+        return;
+      }
+      saveBtn.textContent = 'שומר...';
+    } else {
+      // הוספה במצב קישור חיצוני
+      link = document.getElementById('itemLink').value.trim();
+      if (!link) { showToast('יש להזין קישור', 'error'); return; }
+    }
+
     const oldData = JSON.parse(JSON.stringify(data));
     const cat = data.categories.find(c => c.id === currentItemCategoryId);
-    if (!cat) { showToast('שגיאה', 'error'); return; }
+    if (!cat) { showToast('שגיאה', 'error'); saveBtn.textContent = 'שמירה'; saveBtn.disabled = false; return; }
     if (!cat.items) cat.items = [];
     if (editingItem) {
       const item = cat.items.find(i => i.id === editingItem.itemId);
@@ -858,8 +1094,41 @@
     refreshView();
     closeItemModal();
     const ok = await saveData();
+    saveBtn.textContent = 'שמירה';
+    saveBtn.disabled = false;
     if (!ok) { data = oldData; refreshView(); }
-    else showToast(editingItem ? 'הניתוח עודכן ✓' : 'הניתוח נוסף ✓', 'success');
+    else {
+      if (itemFormMode === 'upload' && !editingItem) {
+        showToast('הקובץ הועלה והניתוח נוסף ✓', 'success');
+      } else {
+        showToast(editingItem ? 'הניתוח עודכן ✓' : 'הניתוח נוסף ✓', 'success');
+      }
+    }
+  }
+
+  async function copyItemLink(event, itemId) {
+    event.preventDefault();
+    event.stopPropagation();
+    // מציאת הניתוח מכל הקטגוריות
+    let foundItem = null;
+    for (const cat of data.categories) {
+      const item = (cat.items || []).find(i => i.id === itemId);
+      if (item) { foundItem = item; break; }
+    }
+    if (!foundItem) return;
+    try {
+      await navigator.clipboard.writeText(foundItem.link);
+      const btn = event.currentTarget;
+      btn.classList.add('copied');
+      btn.textContent = '✓';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.textContent = '🔗';
+      }, 1500);
+      showToast('הקישור הועתק ✓', 'success');
+    } catch (e) {
+      showToast('שגיאה בהעתקה', 'error');
+    }
   }
 
   function renderEmojiGrid(elementId, type) {
