@@ -4,7 +4,7 @@
       "id": "district-survey",
       "title": "ניתוח שאלון מחוזי",
       "desc": "דוחות משוב וניתוחים של שאלונים שהועברו לרכזים ובעלי תפקידים במחוז",
-      "icon": "chart",
+      "icon": "graduation",
       "items": [
         {
           "id": 1,
