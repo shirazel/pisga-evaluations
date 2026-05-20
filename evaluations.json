@@ -134,6 +134,13 @@
           "desc": "מנחה: דנה בירן",
           "link": "https://regal-zabaione-165fcd.netlify.app/",
           "icon": "calendar"
+        },
+        {
+          "id": 5,
+          "title": "רכזי הכלה שנה ג'",
+          "desc": "מנחה: חוה בלומנפלד ורויטל זורח",
+          "link": "https://unique-panda-591045.netlify.app/",
+          "icon": "calendar"
         }
       ]
     },
