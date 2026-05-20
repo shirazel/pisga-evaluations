@@ -113,6 +113,13 @@
           "desc": "מנחה: טל אלון מן",
           "link": "https://jovial-bienenstitch-39cf60.netlify.app/",
           "icon": "calendar"
+        },
+        {
+          "id": 2,
+          "title": "אנגלית PLC",
+          "desc": "מנחה: Jihan Jazmawi",
+          "link": "https://beautiful-lolly-033397.netlify.app/",
+          "icon": "calendar"
         }
       ]
     },
