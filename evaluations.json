@@ -84,7 +84,15 @@
       "title": "מצגות",
       "desc": "",
       "icon": "archive",
-      "items": []
+      "items": [
+        {
+          "id": 1,
+          "title": "presentation2",
+          "desc": "",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/presentation2.html",
+          "icon": "archive"
+        }
+      ]
     }
   ]
 }
