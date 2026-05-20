@@ -141,6 +141,13 @@
           "desc": "מנחה: חוה בלומנפלד ורויטל זורח",
           "link": "https://unique-panda-591045.netlify.app/",
           "icon": "calendar"
+        },
+        {
+          "id": 6,
+          "title": "מנהלות פדגוגיה שנה ב'",
+          "desc": "מנחה: אביחי בן לאה",
+          "link": "https://spring-shadow-e513.shiraroth-z.workers.dev/",
+          "icon": "calendar"
         }
       ]
     },
