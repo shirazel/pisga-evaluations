@@ -127,6 +127,13 @@
           "desc": "מנחה: סנדרה נזרוב",
           "link": "https://loquacious-sorbet-517dc4.netlify.app/",
           "icon": "calendar"
+        },
+        {
+          "id": 4,
+          "title": "הבעה רגשית בצילום - קנבה ובינה מלאכותית",
+          "desc": "מנחה: דנה בירן",
+          "link": "https://regal-zabaione-165fcd.netlify.app/",
+          "icon": "calendar"
         }
       ]
     },
