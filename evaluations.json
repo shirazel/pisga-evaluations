@@ -55,7 +55,15 @@
       "title": "ניתוח סדנאות פסג\"ה בתנועה",
       "desc": "משובים וניתוחים של סדנאות וההשתלמויות במסגרת פסג\"ה בתנועה",
       "icon": "bars",
-      "items": []
+      "items": [
+        {
+          "id": 1,
+          "title": "פודקאסט בשירות הפדגוגיה",
+          "desc": "מנחה: מיכל אבן",
+          "link": "https://feedback-tnuaa.web.app/#r=N4IgbiBcCMA0IFsCmAXAhgEzeqoDuA9gE4DWAzgBYEAOUIgJ6CCroIMugg56CALoIIeggG6AAEgi6CBL0ECboIAvQRoCvQXoBXQes0BLoI3nDpIeMgB2KYnUB7oMMDboIB3QXu36B90DUgyAYyoEANnWmj+MiYHXQRvt4fmo6VheV15Pb2ErIiQyagINDCQtAGECAFctOmgAJl5dEX5hQF3QEABfeCwcSFAbAgRNFDIoAG0QQUA10GleFRVcwCPQEVz+D2FAA9ApEV1GQQEDYQlVeHZhS3hdXpHhZd5vQX95ADoraR683t1C7f42-kY23jbdFZBpYwFOf1CWBeeDRhN+d6iKy9ZjCQDHoLxWDdAGegki6klEkO4I0kVl0omhnWkyl6nSMRnYkL+23xhIMomED2k+148gu0hc0PYeMJx3mAhRPX4sICfQ2owkNIJMhOjGhRg8AiMgkY5hka241KsHhlbiMzF6UnR7Gm7Hpum4ARpx0Jgmkk15wkEEjyMyMwlMjHcRn0zBpf2k0OE8nhEkRKuENykRmkjFEzNyOsR0n4zHtFwKcqYbC4fD+olBjDRGM6Hk4oik5Mpuk6jH4vVGDtOul0EiOULFWLmnXkzA9uVBQWkHnxIs6uhubURuk7vGFof4LgA9G3+IjZtDmDJkxweMEjIxGCNuA6Q2HmSAALrwWzEaLNUCxRqQLLqJAYKAANngGiQAHMoAAWeDadBOGBZGUl4ENeADMd4PjeL7vlAADsP4EH+UDZEBIBXl+EFQOBICvh+kAAKwIUhAGoehBGYZA344TBkDYb+aD-ihsDAdeVHIJBVG4RhID0YxgHMWhIFYRR2FcZAz48YhDHIYBx4gAAjgAyugDTNE0t63s+t4AAzHk037gbecBZHpt7geZsDQHpxmwN+35WbATRwOBBmWaZtmwIZbmHmUIAJEQACWYD3rgIA2KkRBRFoACKqRoFoAAi2BoHQogbluO5wtIEiMAY5iQLw0CwQApL4whlsIAA6Gh+IIKJSIw6ybPlvBZPhpXDBV1WbDKCazPMBWgaBHXlQU1W6KwsIVllugjB40gFZ+WQjV1GgiJKUxzIwYKDcNZWrewm5iAtrXtftY0aKUP5IAAHigoUIPFcUOAAghoDEAJ5kAF17PHkZa5NCBS9LwvQmF4jCbMGrq5tKpaTPI-BGFIk6CPQmpYnIijKIK8rMKC9IGJMEibBcIyTLMCbiPwhRBOWwisIic7pdu5USEETVbJDVqMH1zZBDsrD0EUvDo0zWxesLM3WhIwsXEYia5MIkzTNI7wjJ0-BMGDNKPO4qpZfQOVeFIvTtl4+YCMc4go8IeZjgaBYyMYDp-JsZttkEFqdIdoQusIzAC3loReNaIogsO-Aa0ERZUts0hzT0nCMB4Rs0oocYyA2mLxz2JiyJSDr0PIZsCEs27hpNPRlutQqLvc7BSCMoiCJMtIXKwfxwjc+Mi4I4ZOvwOXB5zSaMMiXrsPaxo2luWK-PiWoKFanQ8oAW6BW5OTuO5IQTDG0jCsDICfDKWBcGFIavMBrDv9HM2xpZurPBqG4aqL5NhRNg94vfdMCwY+WCsEACcj5gEANAtAUCJQgA",
+          "icon": "bars"
+        }
+      ]
     },
     {
       "id": "cat-5jinfr",
