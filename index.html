@@ -152,6 +152,60 @@
   body.admin-mode .category-card { border: 2px dashed var(--gray-light); }
   body.admin-mode .category-card:hover { transform: none; box-shadow: none; border-color: var(--orange); }
   .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+  .search-box {
+    position: relative;
+    margin-bottom: 28px;
+    max-width: 480px;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 14px 48px 14px 18px;
+    border: 1.5px solid var(--gray-light);
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 1rem;
+    background: var(--white);
+    transition: all 0.2s ease;
+    outline: none;
+  }
+  .search-box input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(79, 189, 196, 0.12);
+  }
+  .search-box .search-icon {
+    position: absolute;
+    top: 50%;
+    right: 18px;
+    transform: translateY(-50%);
+    color: var(--gray);
+    pointer-events: none;
+    font-size: 1.1rem;
+  }
+  .search-box .search-clear {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    background: var(--gray-light);
+    border: none;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--gray);
+    font-size: 0.85rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .search-box .search-clear.visible { display: flex; }
+  .search-box .search-clear:hover { background: var(--gray); color: var(--white); }
+  .search-no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--gray);
+  }
+  .search-no-results .icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.5; }
   .card {
     background: var(--white); border-radius: 16px; padding: 28px;
     position: relative; overflow: hidden; border: 1px solid var(--gray-light);
@@ -223,6 +277,46 @@
     background: linear-gradient(135deg, var(--orange), var(--teal));
     color: var(--white); border-color: transparent; opacity: 1;
   }
+  /* כפתור תצוגה מקדימה */
+  .preview-toggle {
+    position: fixed; bottom: 24px; left: 180px;
+    background: var(--white); color: var(--gray);
+    border: 1px solid var(--gray-light);
+    padding: 10px 16px; border-radius: 100px;
+    font-family: inherit; font-size: 0.85rem; font-weight: 500;
+    cursor: pointer; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    z-index: 100; display: none; align-items: center; gap: 6px;
+    transition: all 0.2s ease;
+  }
+  /* מוצג רק כשמחוברים כמנהל */
+  body.admin-logged .preview-toggle { display: flex; }
+  .preview-toggle:hover { transform: translateY(-2px); border-color: var(--teal); color: var(--teal); }
+  .preview-toggle.preview-active {
+    background: var(--teal-soft); color: var(--teal); border-color: var(--teal);
+  }
+  /* במצב תצוגה מקדימה - מסתירים את כל כלי העריכה */
+  body.preview-mode .card-actions,
+  body.preview-mode .category-actions,
+  body.preview-mode .add-btn-card,
+  body.preview-mode .copy-link-btn,
+  body.preview-mode .admin-banner {
+    display: none !important;
+  }
+  body.preview-mode .card,
+  body.preview-mode .category-card {
+    border: 1px solid var(--gray-light) !important;
+    cursor: pointer !important;
+  }
+  /* באנר עדין שמזכיר שאתה בתצוגה מקדימה */
+  .preview-banner {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0;
+    background: linear-gradient(90deg, var(--teal), var(--orange));
+    color: white; text-align: center;
+    padding: 8px; font-size: 0.85rem; font-weight: 600;
+    z-index: 90;
+  }
+  body.preview-mode .preview-banner { display: block; }
   .modal-overlay {
     position: fixed; inset: 0;
     background: rgba(31, 41, 55, 0.6);
@@ -413,6 +507,13 @@
   <span id="adminIcon">🔒</span>
   <span id="adminText">כניסת מנהלת</span>
 </button>
+
+<button class="preview-toggle" id="previewToggle" onclick="togglePreview()">
+  <span id="previewIcon">👁️</span>
+  <span id="previewText">תצוגת מבקר</span>
+</button>
+
+<div class="preview-banner">👁️ מצב תצוגת מבקר · ככה האתר נראה למבקרים · לחצי "חזרה לעריכה" כדי לערוך</div>
 
 <div class="modal-overlay" id="adminLoginModal">
   <div class="modal">
@@ -650,6 +751,10 @@
   function saveSession(token) { localStorage.setItem(SESSION_KEY, JSON.stringify({ token })); }
   function clearSession() { localStorage.removeItem(SESSION_KEY); }
   function isAdmin() { const s = loadSession(); return s && s.token; }
+  // מצב תצוגת מבקר
+  let inPreviewMode = false;
+  // האם להציג כלי עריכה (מנהל מחובר + לא במצב תצוגה מקדימה)
+  function isEditing() { return isAdmin() && !inPreviewMode; }
   function getToken() { const s = loadSession(); return s ? s.token : null; }
 
   function getPublicDataUrl() {
@@ -772,7 +877,7 @@
         grid.appendChild(btn);
       });
     }
-    if (isAdmin()) {
+    if (isEditing()) {
       const addBtn = document.createElement('button');
       addBtn.className = 'add-btn-card large';
       addBtn.onclick = openAddCategoryModal;
@@ -787,6 +892,9 @@
     currentView = categoryId;
     window.location.hash = categoryId;
     const main = document.getElementById('mainContent');
+    const items = cat.items || [];
+    // מציגים חיפוש רק אם יש מספיק ניתוחים (לפחות 4)
+    const showSearch = items.length >= 4;
     main.innerHTML = `
       <div class="breadcrumb">
         <button class="back-btn" onclick="goHome()"><span>→</span><span>חזרה לתחומי הערכה</span></button>
@@ -797,12 +905,40 @@
       </div>
       <h2 class="section-title">${escapeHtml(cat.title)}</h2>
       <p class="section-desc">${escapeHtml(cat.desc || '')}</p>
+      ${showSearch ? `
+      <div class="search-box">
+        <input type="text" id="categorySearch" placeholder="חיפוש לפי שם ההשתלמות או המנחה..." oninput="filterItems('${categoryId}')">
+        <span class="search-icon">🔍</span>
+        <button class="search-clear" id="searchClear" onclick="clearSearch('${categoryId}')" title="ניקוי">✕</button>
+      </div>
+      ` : ''}
       <div class="cards-grid" id="cardsGrid"></div>
     `;
+    renderCategoryItems(categoryId, '');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderCategoryItems(categoryId, searchTerm) {
+    const cat = data.categories.find(c => c.id === categoryId);
+    if (!cat) return;
     const grid = document.getElementById('cardsGrid');
-    const items = cat.items || [];
-    if (items.length === 0 && !isAdmin()) {
-      grid.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>אין עדיין ניתוחים בקטגוריה זו</p></div>`;
+    if (!grid) return;
+    grid.innerHTML = '';
+    const allItems = cat.items || [];
+    const term = (searchTerm || '').trim().toLowerCase();
+    // סינון לפי כותרת או תיאור
+    const items = term
+      ? allItems.filter(item =>
+          (item.title || '').toLowerCase().includes(term) ||
+          (item.desc || '').toLowerCase().includes(term))
+      : allItems;
+
+    if (items.length === 0) {
+      if (term) {
+        grid.innerHTML = `<div class="search-no-results"><div class="icon">🔍</div><p>לא נמצאו ניתוחים שתואמים לחיפוש "${escapeHtml(searchTerm)}"</p></div>`;
+      } else if (!isAdmin()) {
+        grid.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>אין עדיין ניתוחים בקטגוריה זו</p></div>`;
+      }
     } else {
       items.forEach((item, index) => {
         const cardEl = document.createElement('a');
@@ -823,19 +959,37 @@
           <span class="card-link">לפתיחת הניתוח</span>
         `;
         cardEl.addEventListener('click', (e) => {
-          if (document.body.classList.contains('admin-mode')) e.preventDefault();
+          if (document.body.classList.contains('admin-mode') && !inPreviewMode) e.preventDefault();
         });
         grid.appendChild(cardEl);
       });
     }
-    if (isAdmin()) {
+    // כפתור הוספה - רק כשאין חיפוש פעיל
+    if (isEditing() && !term) {
       const addBtn = document.createElement('button');
       addBtn.className = 'add-btn-card';
       addBtn.onclick = () => openAddItemModal(cat.id);
       addBtn.innerHTML = `<div class="plus">+</div><div>הוספת ניתוח חדש</div>`;
       grid.appendChild(addBtn);
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function filterItems(categoryId) {
+    const input = document.getElementById('categorySearch');
+    const clearBtn = document.getElementById('searchClear');
+    if (!input) return;
+    const term = input.value;
+    if (clearBtn) clearBtn.classList.toggle('visible', term.length > 0);
+    renderCategoryItems(categoryId, term);
+  }
+
+  function clearSearch(categoryId) {
+    const input = document.getElementById('categorySearch');
+    const clearBtn = document.getElementById('searchClear');
+    if (input) input.value = '';
+    if (clearBtn) clearBtn.classList.remove('visible');
+    renderCategoryItems(categoryId, '');
+    if (input) input.focus();
   }
 
   function goHome() { window.location.hash = ''; renderHome(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
@@ -1242,8 +1396,35 @@
     const btn = document.getElementById('adminToggle');
     const icon = document.getElementById('adminIcon');
     const text = document.getElementById('adminText');
-    if (isAdmin()) { btn.classList.add('active'); icon.textContent = '🔓'; text.textContent = 'מצב מנהלת'; }
-    else { btn.classList.remove('active'); icon.textContent = '🔒'; text.textContent = 'כניסת מנהלת'; }
+    if (isAdmin()) {
+      btn.classList.add('active'); icon.textContent = '🔓'; text.textContent = 'מצב מנהלת';
+      document.body.classList.add('admin-logged');
+    } else {
+      btn.classList.remove('active'); icon.textContent = '🔒'; text.textContent = 'כניסת מנהלת';
+      document.body.classList.remove('admin-logged');
+    }
+  }
+
+  // מצב תצוגת מבקר - מסתיר כלי עריכה זמנית בלי להתנתק
+  function togglePreview() {
+    inPreviewMode = !inPreviewMode;
+    const btn = document.getElementById('previewToggle');
+    const icon = document.getElementById('previewIcon');
+    const text = document.getElementById('previewText');
+    if (inPreviewMode) {
+      document.body.classList.add('preview-mode');
+      document.body.classList.remove('admin-mode');
+      btn.classList.add('preview-active');
+      icon.textContent = '✏️';
+      text.textContent = 'חזרה לעריכה';
+    } else {
+      document.body.classList.remove('preview-mode');
+      document.body.classList.add('admin-mode');
+      btn.classList.remove('preview-active');
+      icon.textContent = '👁️';
+      text.textContent = 'תצוגת מבקר';
+    }
+    refreshView();
   }
 
   function closeAdminLoginModal() { document.getElementById('adminLoginModal').classList.remove('active'); }
