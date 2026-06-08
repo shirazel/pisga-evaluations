@@ -7,6 +7,14 @@
       "icon": "graduation",
       "items": [
         {
+          "id": 24,
+          "title": "הבעה רגשית בצילום, בקנבה ובינה מלאכותית",
+          "desc": "מנחה: דנה בירן",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/report_1780917292744.html",
+          "icon": "graduation",
+          "createdAt": "2026-06-08T11:14:54.411Z"
+        },
+        {
           "id": 23,
           "title": "גנים מכילים אינקלו",
           "desc": "מנחות: ד\"ר נעמה צורן ויעל מימון",
