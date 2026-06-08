@@ -7,6 +7,14 @@
       "icon": "graduation",
       "items": [
         {
+          "id": 23,
+          "title": "גנים מכילים אינקלו",
+          "desc": "",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/report_1780917164188.html",
+          "icon": "graduation",
+          "createdAt": "2026-06-08T11:12:45.849Z"
+        },
+        {
           "id": 1,
           "title": "רכזות חינוך לשוני",
           "desc": "מנחה: מרים אל גביש",
