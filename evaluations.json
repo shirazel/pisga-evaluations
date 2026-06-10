@@ -209,6 +209,14 @@
       "icon": "bars",
       "items": [
         {
+          "id": 8,
+          "title": "כלי ויסות רגשי בניהול כיתה   אורט שחר",
+          "desc": "מנחים: אריאלה וארי",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/report_1781092999248.html",
+          "icon": "bars",
+          "createdAt": "2026-06-10T12:03:21.112Z"
+        },
+        {
           "id": 7,
           "title": "כלי ויסות רגשי בניהול כיתה - אורט חקלאי  פרדס חנה כרכור",
           "desc": "מנחים: אריאלה וארי",
