@@ -209,6 +209,14 @@
       "icon": "bars",
       "items": [
         {
+          "id": 9,
+          "title": "טיפול בהתנגדויות  - ישיבה תיכונית פרדס חנה",
+          "desc": "מנחה: אביחי בן לאה",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/report_1781093173148.html",
+          "icon": "bars",
+          "createdAt": "2026-06-10T12:06:15.100Z"
+        },
+        {
           "id": 8,
           "title": "כלי ויסות רגשי בניהול כיתה   אורט שחר",
           "desc": "מנחים: אריאלה וארי",
