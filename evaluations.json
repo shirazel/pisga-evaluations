@@ -209,6 +209,14 @@
       "icon": "bars",
       "items": [
         {
+          "id": 12,
+          "title": "הוגנות בחינוך בעולם משתנה   תיכון הרב תחומי לאומנויות מודעים עמל חדרה",
+          "desc": "",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/report_1781093888213.html",
+          "icon": "bars",
+          "createdAt": "2026-06-10T12:18:10.237Z"
+        },
+        {
           "id": 11,
           "title": "הוראה דיפרנציאלית - אורט שחר פרדס חנה כרכור",
           "desc": "מנחה: אביחי בן לאה",
