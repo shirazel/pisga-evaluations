@@ -209,6 +209,14 @@
       "icon": "bars",
       "items": [
         {
+          "id": 11,
+          "title": "הוראה דיפרנציאלית - אורט שחר פרדס חנה כרכור",
+          "desc": "מנחה: אביחי בן לאה",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/report_1781093447546.html",
+          "icon": "bars",
+          "createdAt": "2026-06-10T12:10:49.505Z"
+        },
+        {
           "id": 10,
           "title": "הוראה דיפרנציאלית   תיכון חדרה",
           "desc": "מנחה: אביחי בן לאה",
