@@ -209,6 +209,14 @@
       "icon": "bars",
       "items": [
         {
+          "id": 10,
+          "title": "הוראה דיפרנציאלית   תיכון חדרה",
+          "desc": "מנחה: אביחי בן לאה",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/report_1781093310534.html",
+          "icon": "bars",
+          "createdAt": "2026-06-10T12:08:32.610Z"
+        },
+        {
           "id": 9,
           "title": "טיפול בהתנגדויות  - ישיבה תיכונית פרדס חנה",
           "desc": "מנחה: אביחי בן לאה",
