@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>כלי ויסות רגשי בניהול כיתה</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Arial, sans-serif; direction: rtl; background: #f8fafc; color: #0f172a; }
+    .flexible-textarea { min-height: 120px; width: 100%; white-space: pre-wrap; outline: none;
+      line-height: 1.6; padding: 15px; background-color: white; border: 1px solid #cbd5e1;
+      border-radius: 8px; font-size: 14px; }
+    @media print {
+      @page { size: A4 portrait; margin: 10mm; }
+      body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="max-w-4xl mx-auto p-8 space-y-6 bg-white rounded-xl border border-slate-200 mt-6">
+
+  <div class="bg-slate-800 text-white p-6 rounded-xl">
+    <div class="grid grid-cols-3 gap-4 text-center">
+      <div class="border-l border-slate-500 pl-4">
+        <h3 class="text-xs text-slate-300 uppercase font-bold mb-1">שם הסדנה</h3>
+        <p class="font-bold text-lg">כלי ויסות רגשי בניהול כיתה</p>
+      </div>
+      <div class="border-l border-slate-500 pl-4">
+        <h3 class="text-xs text-slate-300 uppercase font-bold mb-1">מנחה</h3>
+        <p class="font-bold text-lg">אריאלה וארי</p>
+      </div>
+      <div>
+        <h3 class="text-xs text-slate-300 uppercase font-bold mb-1">מוסד</h3>
+        <p class="font-bold text-lg">תיכון חדש בית אליעזר</p>
+        <p class="text-xs text-emerald-400 mt-1 font-bold">20 משיבים</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-3 gap-4">
+    <div class="bg-white p-4 rounded-xl border-t-4 border-indigo-500 shadow-sm text-center">
+      <p class="text-xs font-bold text-gray-400 uppercase">מדד שביעות רצון</p>
+      <p class="text-3xl font-bold text-slate-800 mt-1">76%</p>
+    </div>
+    <div class="bg-white p-4 rounded-xl border-t-4 border-emerald-500 shadow-sm text-center">
+      <p class="text-xs font-bold text-gray-400 uppercase">חוזקות</p>
+      <p class="text-sm font-bold text-emerald-700 mt-1">רלוונטיות לעבודת ההוראה, בהירות ומקצועיות המנחה, שיתוף ודיון, אווירה תומכת</p>
+    </div>
+    <div class="bg-white p-4 rounded-xl border-t-4 border-rose-500 shadow-sm text-center">
+      <p class="text-xs font-bold text-gray-400 uppercase">לשיפור</p>
+      <p class="text-sm font-bold text-rose-700 mt-1">—</p>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl border border-blue-100">
+    <h2 class="text-xl font-bold text-blue-900 mb-4 border-b border-blue-50 pb-2">סיכום נתונים כמותי</h2>
+    <div class="grid grid-cols-3 gap-4 text-sm">
+      <div class="bg-emerald-50 p-3 rounded border border-emerald-100">
+        <strong class="block text-emerald-800 mb-2">חוזקות, 70% ומעלה</strong>
+        <ul class="list-disc list-inside text-slate-700 space-y-1"><li>רלוונטיות לעבודת ההוראה</li><li>בהירות ומקצועיות המנחה</li><li>שיתוף ודיון</li><li>אווירה תומכת</li></ul>
+      </div>
+      <div class="bg-yellow-50 p-3 rounded border border-yellow-100">
+        <strong class="block text-yellow-800 mb-2">לדיוק, בינוני</strong>
+        <ul class="list-disc list-inside text-slate-700 space-y-1"><li>חידוש ועוררות מחשבה</li><li>יישום בכיתה</li></ul>
+      </div>
+      <div class="bg-rose-50 p-3 rounded border border-rose-100">
+        <strong class="block text-rose-800 mb-2">אתגרים, 20% ומטה</strong>
+        <ul class="list-disc list-inside text-slate-700 space-y-1"><li>—</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+    <h3 class="text-lg font-bold text-gray-700 mb-4 text-center">התפלגות תשובות, אחוזים מוערמים</h3>
+    <div style="position:relative;height:350px;width:100%;">
+      <canvas id="mainChart"></canvas>
+    </div>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+    <h3 class="text-lg font-bold text-gray-700 mb-4 text-center">תגובות פתוחות</h3>
+    <div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm text-slate-700 mb-2">היה ממצא</div><div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm text-slate-700 mb-2">אנחנו מודעים לבעייה מנסיון הלימוד , יחד עם זאת יש פה המון עבודה אישית של מורים שלא ניתן ללמד אותה אלא רק לתת נקודה למחשבה </div><div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm text-slate-700 mb-2">לי הייתה תחושה שהמנחה הגיעה הישר מלימודים במכללה כלשהי לחינוך. הרבה קלישאות, פחות הקשר למציאות.</div><div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm text-slate-700 mb-2">השיתופים של המורים והמורות היו מעוררי השראה, המדריכים היו מסבירי פנים ורגישים </div><div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm text-slate-700 mb-2">הסדנה מעוררת מודעות בעיקר, ובזה תרומתה. </div><div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm text-slate-700 mb-2">להבא כדאי לדעתי לחשוב על דרכים יצירתיות כדי לעודד מורים להשתתף </div><div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm text-slate-700 mb-2">סדנה מאוד מעניינת לא הספקנו את כולה</div><div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm text-slate-700 mb-2">קצר מדי. זה נושא ליום שלם או השתלמות שלמה. פחות מזה, זה מיותר</div>
+  </div>
+
+  <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-200">
+    <h2 class="text-lg font-bold text-indigo-900 mb-2">סיכום תובנות והמלצות</h2>
+    <div class="text-slate-800 text-sm leading-relaxed bg-white p-4 rounded-lg border border-indigo-300"><p style="margin:6px 0;">להלן סיכום קצר ותמציתי של משוב סדנת "כלי ויסות רגשי בניהול כיתה" למורים בתיכון חדש בית אליעזר, בהנחיית אריאלה וארי, המבוסס על תגובות 20 משיבים:</p>
+<p style="margin:6px 0;">הסדנה נתפסה כרלוונטית ביותר לעבודת ההוראה (90% חיובי), וזכתה לשבחים על האווירה התומכת ועידוד השיתוף והדיון (90% חיובי לכל אחד). גם בהירות המנחים ומקצועיותם זכו לציון גבוה (80% חיובי). המשיבים ציינו כי הסדנה תרמה בעיקר להעלאת מודעות וסיפקה "נקודה למחשבה", ושיתופי המורים היו מעוררי השראה.</p>
+<p style="margin:6px 0;">עם זאת, עלו ביקורות משמעותיות בתחומים אחרים. הסדנה קיבלה ציון נמוך יחסית בסעיף החידוש ועוררות המחשבה (40% חיובי), וציון בינוני בנוגע ליישום בפועל בכיתה (65% חיובי). טענות רבות התייחסו לכך שהסדנה הייתה "קצרה מדי", וכי נושא כה חשוב דורש מסגרת זמן רחבה יותר (יום שלם או השתלמות מעמיקה). חלק מהמשיבים אף סברו כי הפורמט הנוכחי היה מיותר וכי ההנחיה כללה "הרבה קלישאות" עם פחות חיבור למציאות הכיתה.</p>
+<p style="margin:6px 0;">לסיכום, בעוד שהסדנה הצליחה ליצור אווירה תומכת ולעורר מודעות ודיון פורה בין המורים, קיים צורך לבחון את הרחבת מסגרת הזמן שלה, העמקה בתכנים יישומיים, ופיתוח דרכים יצירתיות להגברת החדשנות והמעורבות כדי למקסם את תרומתה למורים.</p></div>
+  </div>
+
+  <div class="text-center text-xs text-slate-400 mt-8 pb-4">הופק באמצעות היחידה להערכה פסג״ה חדרה</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+var LABELS  = ["רלוונטיות לעבודת ההוראה", "חידוש ועוררות מחשבה", "יישום בכיתה", "בהירות ומקצועיות המנחה", "שיתוף ודיון", "אווירה תומכת"];
+var qStats  = [[0, 0, 2, 8, 10], [1, 6, 5, 5, 3], [0, 2, 5, 8, 5], [0, 0, 4, 7, 9], [0, 2, 0, 8, 10], [0, 1, 1, 8, 10]];
+var COLORS  = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#16a34a"];
+var dlabels = ["כלל לא","במידה מועטה","במידה בינונית","במידה רבה","במידה רבה מאוד"];
+var datasets = dlabels.map(function(label, rIdx) {
+  return {
+    label: label,
+    data: qStats.map(function(counts) {
+      var total = counts.reduce(function(a,b){return a+b;},0);
+      return total ? Math.round(counts[rIdx]/total*100) : 0;
+    }),
+    backgroundColor: COLORS[rIdx]
+  };
+});
+new Chart(document.getElementById('mainChart'), {
+  type: 'bar',
+  data: { labels: LABELS, datasets: datasets },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: false,
+    scales: {
+      x: { stacked: true, max: 100, ticks: { callback: function(v){ return v+'%'; } } },
+      y: { stacked: true }
+    },
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: { callbacks: { label: function(c){ return c.dataset.label+': '+Math.round(c.raw)+'%'; } } }
+    }
+  }
+});
+</script>
+</body>
+</html>
