@@ -7,6 +7,14 @@
       "icon": "graduation",
       "items": [
         {
+          "id": 28,
+          "title": "הוראת המתמטיקה למורי ה ו",
+          "desc": "מנחה: גילת נשר",
+          "link": "https://shirazel.github.io/pisga-evaluations/reports/report_1782906909855.html",
+          "icon": "graduation",
+          "createdAt": "2026-07-01T11:55:13.068Z"
+        },
+        {
           "id": 27,
           "title": "רכזים חברתיים כמעצב קהילת שייכות",
           "desc": "מנחה: רינת תמיר",
